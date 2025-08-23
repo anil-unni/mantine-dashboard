@@ -23,6 +23,11 @@ export const paths = {
         list: '/dashboard/management/customers/list',
         view: (customerId: string) => `/dashboard/management/customers/${customerId}`,
       },
+      news: {
+        root: '/dashboard/management/news',
+        list: '/dashboard/management/news/list',
+        create: '/dashboard/management/news/create',
+      },
     },
     apps: {
       root: '/dashboard/apps',
@@ -33,6 +38,7 @@ export const paths = {
       metrics: '/dashboard/widgets/metrics',
       charts: '/dashboard/widgets/charts',
       tables: '/dashboard/widgets/tables',
+      news: '/dashboard/widgets/news',
     },
   },
 };

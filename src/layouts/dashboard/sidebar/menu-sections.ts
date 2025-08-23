@@ -1,16 +1,7 @@
 import { ElementType } from 'react';
 import {
-  PiChartLineUpDuotone,
-  PiChatCenteredDotsDuotone,
-  PiFilesDuotone,
-  PiKanbanDuotone,
-  PiLockKeyDuotone,
-  PiShieldCheckDuotone,
-  PiSquaresFourDuotone,
   PiStarDuotone,
-  PiTableDuotone,
-  PiUserPlusDuotone,
-  PiUsersDuotone,
+  PiNewspaperDuotone,
 } from 'react-icons/pi';
 import { paths } from '@/routes/paths';
 
@@ -37,22 +28,6 @@ export const menu: MenuItem[] = [
         href: paths.dashboard.home,
         icon: PiStarDuotone,
       },
-      {
-        name: 'Documentation',
-        href: paths.docs.root,
-        icon: PiFilesDuotone,
-      },
-    ],
-  },
-
-  {
-    header: 'Apps',
-    section: [
-      {
-        name: 'Kanban',
-        href: paths.dashboard.apps.kanban,
-        icon: PiKanbanDuotone,
-      },
     ],
   },
 
@@ -60,63 +35,20 @@ export const menu: MenuItem[] = [
     header: 'Management',
     section: [
       {
-        name: 'Customers',
-        icon: PiUsersDuotone,
-        href: paths.dashboard.management.customers.root,
+        name: 'News',
+        icon: PiNewspaperDuotone,
+        href: paths.dashboard.management.news.root,
         dropdownItems: [
           {
             name: 'List',
-            href: paths.dashboard.management.customers.list,
+            href: paths.dashboard.management.news.list,
+          },
+          {
+            name: 'Create',
+            href: paths.dashboard.management.news.create,
           },
         ],
       },
     ],
-  },
-
-  {
-    header: 'Widgets',
-    section: [
-      {
-        name: 'Charts',
-        href: paths.dashboard.widgets.charts,
-        icon: PiChartLineUpDuotone,
-      },
-      {
-        name: 'Metrics',
-        href: paths.dashboard.widgets.metrics,
-        icon: PiSquaresFourDuotone,
-      },
-      {
-        name: 'Tables',
-        href: paths.dashboard.widgets.tables,
-        icon: PiTableDuotone,
-      },
-    ],
-  },
-
-  {
-    header: 'Authentication',
-    section: [
-      {
-        name: 'Register',
-        href: paths.auth.register,
-        icon: PiUserPlusDuotone,
-      },
-      {
-        name: 'Login',
-        href: paths.auth.login,
-        icon: PiShieldCheckDuotone,
-      },
-      {
-        name: 'Forgot Password',
-        href: paths.auth.forgotPassword,
-        icon: PiLockKeyDuotone,
-      },
-      {
-        name: 'OTP',
-        href: paths.auth.otp,
-        icon: PiChatCenteredDotsDuotone,
-      },
-    ],
-  },
+  },  
 ];

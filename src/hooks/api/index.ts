@@ -3,4 +3,5 @@ export * from './atoms';
 export * from './auth';
 export * from './companies';
 export * from './customers';
+export * from './news';
 export * from './notifications';

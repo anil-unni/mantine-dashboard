@@ -111,6 +111,10 @@ const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: paths.dashboard.management.news.root,
+            element: LazyPage(() => import('@/pages/dashboard/management/news')),
+          },
         ],
       },
       /* --------------------------------- WIDGETS -------------------------------- */
@@ -133,6 +137,10 @@ const router = createBrowserRouter([
           {
             path: paths.dashboard.widgets.tables,
             element: LazyPage(() => import('@/pages/dashboard/widgets/tables')),
+          },
+          {
+            path: paths.dashboard.widgets.news,
+            element: LazyPage(() => import('@/pages/dashboard/widgets/news')),
           },
         ],
       },

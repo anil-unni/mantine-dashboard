@@ -1,7 +1,6 @@
 import { PiArrowLeft as GoBackIcon } from 'react-icons/pi';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Box, Button, Center, Flex, Image, SimpleGrid, Text, Title } from '@mantine/core';
-import demoImg from '@/assets/app-demo.webp';
+import { Box, Button, Center, Flex, SimpleGrid } from '@mantine/core';
 import { Logo } from '@/components/logo';
 
 export function AuthLayout() {
@@ -34,15 +33,6 @@ export function AuthLayout() {
         display={{ base: 'none', lg: 'flex' }}
         style={{ borderRadius: 'var(--mantine-radius-md)' }}
       >
-        <Box maw="40rem">
-          <Title order={2}>The simplest way to manage your workspace.</Title>
-          <Text my="lg" c="dimmed">
-            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint velit officia
-            consequat duis.
-          </Text>
-
-          <Image src={demoImg} alt="Demo" />
-        </Box>
       </Center>
     </SimpleGrid>
   );

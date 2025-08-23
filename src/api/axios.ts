@@ -7,7 +7,7 @@ export const client = axios.create({
     'Content-type': 'application/json',
     Accept: 'application/json',
   },
-});
+}); 
 
 export function setClientAccessToken(token: string) {
   localStorage.setItem(app.accessTokenStoreKey, token);

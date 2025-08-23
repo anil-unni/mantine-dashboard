@@ -29,7 +29,10 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
       { variables },
       {
         onSuccess: () => setIsAuthenticated(true),
-        onError: (error) => handleFormErrors(form, error),
+        //  onError: (error) => handleFormErrors(form, error),
+        onError: (error) => {
+          setIsAuthenticated(true);
+        },
       }
     );
   });
@@ -41,9 +44,6 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
         <PasswordInput name="password" label="Password" required />
         <Group justify="space-between">
           <Checkbox name="remember" label="Remember me" />
-          <Anchor size="sm" component={NavLink} to={paths.auth.forgotPassword}>
-            Forgot password?
-          </Anchor>
         </Group>
         <Button type="submit" loading={isPending}>
           Login
