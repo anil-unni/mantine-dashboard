@@ -23,6 +23,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/page-header';
 import { FileUpload, MultipleFileUpload } from '@/components/forms';
+import { ConfirmationModal, useConfirmationModal } from '@/components/confirmation-modal';
+import { useFormNavigationGuard } from '@/hooks/use-form-navigation-guard';
 import { useCreateNews } from '@/hooks/api/news';
 import { paths } from '@/routes/paths';
 import type { NewsCreateRequest, NewsSource } from '@/api/entities/news';
@@ -30,6 +32,7 @@ import type { NewsCreateRequest, NewsSource } from '@/api/entities/news';
 export default function CreateNewsPage() {
     const navigate = useNavigate();
     const createNewsMutation = useCreateNews();
+    const { openModal, opened, closeModal, confirm, config } = useConfirmationModal();
 
     const form = useForm<NewsCreateRequest>({
         initialValues: {
@@ -44,7 +47,7 @@ export default function CreateNewsPage() {
             priority: 1,
             overview: '',
             images: [],
-            sources: [],
+            sources: [{ name: '', url: '', description: '' }],
             category: '',
             tags: [],
             author: '',
@@ -60,15 +63,52 @@ export default function CreateNewsPage() {
             isActive: true,
         },
         validate: {
-            title: (value) => (!value ? 'Title is required' : null),
-            description: (value) => (!value ? 'Description is required' : null),
+            title: (value: string) => (!value || value.trim() === '' ? 'Title is required' : null),
+            description: (value: string) => (!value || value.trim() === '' ? 'Description is required' : null),
+            content: (value: string) => (!value || value.trim() === '' ? 'Content is required' : null),
+            author: (value: string) => (!value || value.trim() === '' ? 'Author is required' : null),
+            category: (value: string) => (!value || value.trim() === '' ? 'Category is required' : null),
+            publish_date: (value: string) => (!value ? 'Publish date is required' : null),
+            priority: (value: number) => (!value || value < 1 ? 'Priority must be at least 1' : null),
+            'seodetails.title': (value: string) => (!value || value.trim() === '' ? 'SEO title is required' : null),
+            'seodetails.description': (value: string) => (!value || value.trim() === '' ? 'SEO description is required' : null),
+            'seodetails.keywords': (value: string) => (!value || value.trim() === '' ? 'SEO keywords are required' : null),
+            sources: (value: NewsSource[]) => {
+                if (!value || value.length === 0) {
+                    return 'At least one source is required';
+                }
+                for (let i = 0; i < value.length; i++) {
+                    const source = value[i];
+                    if (!source.name || source.name.trim() === '') {
+                        return `Source ${i + 1} name is required`;
+                    }
+                    if (!source.url || source.url.trim() === '') {
+                        return `Source ${i + 1} URL is required`;
+                    }
+                    // Basic URL validation
+                    try {
+                        new URL(source.url);
+                    } catch {
+                        return `Source ${i + 1} URL must be a valid URL`;
+                    }
+                }
+                return null;
+            },
         },
+    });
+
+    // Check if form has unsaved changes
+    const hasUnsavedChanges = form.isDirty();
+    const { handleNavigation } = useFormNavigationGuard({
+        hasUnsavedChanges,
+        message: 'You have unsaved changes. Are you sure you want to leave?',
+        title: 'Unsaved Changes',
     });
 
     const handleSubmit = async (values: NewsCreateRequest) => {
         try {
             await createNewsMutation.mutateAsync(values);
-            navigate(paths.dashboard.news.list);
+            handleNavigation(paths.dashboard.news.list);
         } catch (error) {
             // Error handling is done in the mutation
         }
@@ -89,7 +129,7 @@ export default function CreateNewsPage() {
                 title="Create News"
                 description="Add a new news article"
                 rightSection={
-                    <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
+                    <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
                         Back to List
                     </Button>
                 }
@@ -130,6 +170,7 @@ export default function CreateNewsPage() {
                                 label="Content"
                                 placeholder="Enter full news content"
                                 minRows={4}
+                                required
                                 {...form.getInputProps('content')}
                             />
                         </Stack>
@@ -216,7 +257,7 @@ export default function CreateNewsPage() {
                         <Title order={4} mb="md">Sources</Title>
                         <Stack gap="md">
                             <Group justify="space-between">
-                                <Text fw={500}>News Sources</Text>
+                                <Text fw={500}>News Sources <Text span c="red">*</Text></Text>
                                 <Button size="xs" leftSection={<IconPlus size={14} />} onClick={addSource}>
                                     Add Source
                                 </Button>
@@ -233,11 +274,13 @@ export default function CreateNewsPage() {
                                         <TextInput
                                             label="Source Name"
                                             placeholder="e.g., BBC News"
+                                            required
                                             {...form.getInputProps(`sources.${index}.name`)}
                                         />
                                         <TextInput
                                             label="Source URL"
                                             placeholder="https://example.com/article"
+                                            required
                                             {...form.getInputProps(`sources.${index}.url`)}
                                         />
                                         <TextInput
@@ -260,6 +303,7 @@ export default function CreateNewsPage() {
                                     <TextInput
                                         label="Author"
                                         placeholder="Author name"
+                                        required
                                         {...form.getInputProps('author')}
                                     />
                                 </Grid.Col>
@@ -267,6 +311,7 @@ export default function CreateNewsPage() {
                                     <TextInput
                                         label="Category"
                                         placeholder="e.g., Technology"
+                                        required
                                         {...form.getInputProps('category')}
                                     />
                                 </Grid.Col>
@@ -275,12 +320,14 @@ export default function CreateNewsPage() {
                                         label="Priority"
                                         placeholder="1"
                                         min={1}
+                                        required
                                         {...form.getInputProps('priority')}
                                     />
                                 </Grid.Col>
                                 <Grid.Col span={{ base: 12, sm: 6 }}>
                                     <DateInput
                                         label="Publish Date"
+                                        required
                                         value={form.values.publish_date ? new Date(form.values.publish_date) : null}
                                         onChange={(date: string | null) => form.setFieldValue('publish_date', date || '')}
                                     />
@@ -325,6 +372,7 @@ export default function CreateNewsPage() {
                             <TextInput
                                 label="SEO Title"
                                 placeholder="SEO optimized title"
+                                required
                                 {...form.getInputProps('seodetails.title')}
                             />
                             <Grid>
@@ -333,6 +381,7 @@ export default function CreateNewsPage() {
                                         label="SEO Description"
                                         placeholder="SEO optimized description"
                                         minRows={3}
+                                        required
                                         {...form.getInputProps('seodetails.description')}
                                     />
                                 </Grid.Col>
@@ -340,6 +389,7 @@ export default function CreateNewsPage() {
                                     <TextInput
                                         label="SEO Keywords"
                                         placeholder="keyword1, keyword2, keyword3"
+                                        required
                                         {...form.getInputProps('seodetails.keywords')}
                                     />
                                 </Grid.Col>
@@ -349,7 +399,7 @@ export default function CreateNewsPage() {
 
                     {/* Actions */}
                     <Group justify="flex-end">
-                        <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
+                        <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
                             Cancel
                         </Button>
                         <Button type="submit" loading={createNewsMutation.isPending}>
@@ -358,6 +408,19 @@ export default function CreateNewsPage() {
                     </Group>
                 </Stack>
             </form>
+
+            <ConfirmationModal
+                opened={opened}
+                onClose={closeModal}
+                onConfirm={confirm}
+                title={config.title || ''}
+                message={config.message || ''}
+                confirmLabel={config.confirmLabel}
+                cancelLabel={config.cancelLabel}
+                confirmColor={config.confirmColor}
+                type={config.type}
+                loading={createNewsMutation.isPending}
+            />
         </Box>
     );
 }

@@ -24,6 +24,8 @@ import { DateInput } from '@mantine/dates';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { PageHeader } from '@/components/page-header';
 import { FileUpload, MultipleFileUpload } from '@/components/forms';
+import { ConfirmationModal, useConfirmationModal } from '@/components/confirmation-modal';
+import { useFormNavigationGuard } from '@/hooks/use-form-navigation-guard';
 import { useNewsDetail, useUpdateNews } from '@/hooks/api/news';
 import { paths } from '@/routes/paths';
 import type { NewsUpdateRequest, NewsSource } from '@/api/entities/news';
@@ -33,6 +35,7 @@ export default function EditNewsPage() {
   const navigate = useNavigate();
   const { data: news, isLoading } = useNewsDetail(id!);
   const updateNewsMutation = useUpdateNews();
+  const { openModal, opened, closeModal, confirm, config } = useConfirmationModal();
 
   const form = useForm<NewsUpdateRequest>({
     initialValues: {
@@ -63,9 +66,17 @@ export default function EditNewsPage() {
       isActive: true,
     },
     validate: {
-      title: (value) => (!value ? 'Title is required' : null),
-      description: (value) => (!value ? 'Description is required' : null),
+      title: (value: string) => (!value ? 'Title is required' : null),
+      description: (value: string) => (!value ? 'Description is required' : null),
     },
+  });
+
+  // Check if form has unsaved changes
+  const hasUnsavedChanges = form.isDirty();
+  const { handleNavigation } = useFormNavigationGuard({
+    hasUnsavedChanges,
+    message: 'You have unsaved changes. Are you sure you want to leave?',
+    title: 'Unsaved Changes',
   });
 
   // Update form when news data loads
@@ -131,10 +142,10 @@ export default function EditNewsPage() {
         description="Update news article details"
         rightSection={
           <Group>
-            <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
+            <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
               Back to List
             </Button>
-            <Button variant="light" onClick={() => navigate(`${paths.dashboard.news.view}/${id}`)}>
+            <Button variant="light" onClick={() => handleNavigation(`${paths.dashboard.news.view}/${id}`)}>
               View News
             </Button>
           </Group>
@@ -395,7 +406,7 @@ export default function EditNewsPage() {
 
           {/* Actions */}
           <Group justify="flex-end">
-            <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
+            <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
               Cancel
             </Button>
             <Button type="submit" loading={updateNewsMutation.isPending}>
@@ -404,6 +415,19 @@ export default function EditNewsPage() {
           </Group>
         </Stack>
       </form>
+
+      <ConfirmationModal
+        opened={opened}
+        onClose={closeModal}
+        onConfirm={confirm}
+        title={config.title || ''}
+        message={config.message || ''}
+        confirmLabel={config.confirmLabel}
+        cancelLabel={config.cancelLabel}
+        confirmColor={config.confirmColor}
+        type={config.type}
+        loading={updateNewsMutation.isPending}
+      />
     </Box>
   );
 }

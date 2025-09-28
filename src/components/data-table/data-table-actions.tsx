@@ -5,12 +5,17 @@ import {
   PiEyeDuotone as ShowIcon,
 } from 'react-icons/pi';
 import { ActionIcon, Group, GroupProps, Tooltip } from '@mantine/core';
+import { useConfirmationModal } from '@/components/confirmation-modal';
 
 export interface DataTableActionsProps extends GroupProps {
   onEdit?: () => void;
   onView?: () => void;
   onDelete?: () => void;
   onRestore?: () => void;
+  gap?: string | number;
+  justify?: string;
+  wrap?: string;
+  children?: React.ReactNode;
 }
 
 export function DataTableActions({
@@ -24,6 +29,21 @@ export function DataTableActions({
   children,
   ...props
 }: DataTableActionsProps) {
+  const { openModal } = useConfirmationModal();
+
+  const handleDelete = () => {
+    if (onDelete) {
+      openModal({
+        title: 'Delete Item',
+        message: 'Are you sure you want to delete this item? This action cannot be undone.',
+        type: 'delete',
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        confirmColor: 'red',
+        onConfirm: onDelete,
+      });
+    }
+  };
   return (
     <Group gap={gap} justify={justify} wrap={wrap} {...props}>
       {onView && (
@@ -43,7 +63,7 @@ export function DataTableActions({
 
       {onDelete && (
         <Tooltip label="Delete">
-          <ActionIcon variant="default" onClick={onDelete}>
+          <ActionIcon variant="default" onClick={handleDelete}>
             <DeleteIcon size="1rem" />
           </ActionIcon>
         </Tooltip>

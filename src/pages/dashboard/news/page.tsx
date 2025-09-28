@@ -17,6 +17,8 @@ import {
 } from '@mantine/core';
 import { TwoColumnLayout } from '@/components/layouts';
 import { FileUpload } from '@/components/forms';
+import { ConfirmationModal, useConfirmationModal } from '@/components/confirmation-modal';
+import { useFormNavigationGuard } from '@/hooks/use-form-navigation-guard';
 import { useNewsPage, useUpdateNewsPage } from '@/hooks/api/news';
 import { paths } from '@/routes/paths';
 import { app } from '@/config';
@@ -26,6 +28,7 @@ export default function NewsPageConfigPage() {
   const navigate = useNavigate();
   const { data: newsPage, isLoading } = useNewsPage();
   const updateNewsPageMutation = useUpdateNewsPage();
+  const { openModal, opened, closeModal, confirm, config } = useConfirmationModal();
 
   const form = useForm<NewsPageUpdateRequest>({
     initialValues: {
@@ -42,9 +45,16 @@ export default function NewsPageConfigPage() {
       isActive: true,
     },
     validate: {
-      title: (value) => (!value ? 'Title is required' : null),
-
+      title: (value: string) => (!value ? 'Title is required' : null),
     },
+  });
+
+  // Check if form has unsaved changes
+  const hasUnsavedChanges = form.isDirty();
+  const { handleNavigation } = useFormNavigationGuard({
+    hasUnsavedChanges,
+    message: 'You have unsaved changes. Are you sure you want to leave?',
+    title: 'Unsaved Changes',
   });
 
   // Update form when news page data loads
@@ -160,7 +170,7 @@ export default function NewsPageConfigPage() {
 
         {/* Actions */}
         <Group justify="flex-end">
-          <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
+          <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
             Cancel
           </Button>
           <Button type="submit" loading={updateNewsPageMutation.isPending}>
@@ -266,17 +276,32 @@ export default function NewsPageConfigPage() {
   );
 
   return (
-    <TwoColumnLayout
-      title="News Page Configuration"
-      description="Configure the news page settings and SEO"
-      rightSection={
-        <Button variant="light" onClick={() => navigate(paths.dashboard.news.list)}>
-          Back to News
-        </Button>
-      }
-      leftContent={leftContent}
-      rightContent={rightContent}
-      stickyRight={true}
-    />
+    <>
+      <TwoColumnLayout
+        title="News Page Configuration"
+        description="Configure the news page settings and SEO"
+        rightSection={
+          <Button variant="light" onClick={() => handleNavigation(paths.dashboard.news.list)}>
+            Back to News
+          </Button>
+        }
+        leftContent={leftContent}
+        rightContent={rightContent}
+        stickyRight={true}
+      />
+
+      <ConfirmationModal
+        opened={opened}
+        onClose={closeModal}
+        onConfirm={confirm}
+        title={config.title || ''}
+        message={config.message || ''}
+        confirmLabel={config.confirmLabel}
+        cancelLabel={config.cancelLabel}
+        confirmColor={config.confirmColor}
+        type={config.type}
+        loading={updateNewsPageMutation.isPending}
+      />
+    </>
   );
 }

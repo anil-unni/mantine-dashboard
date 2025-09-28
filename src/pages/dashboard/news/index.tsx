@@ -24,6 +24,7 @@ import {
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { ListLayout } from '@/components/layouts';
+import { ConfirmationModal, useConfirmationModal } from '@/components/confirmation-modal';
 import { useNewsList, useDeleteNews, useUpdateNewsStatus } from '@/hooks/api/news';
 import { paths } from '@/routes/paths';
 import type { News, NewsFilterParams } from '@/api/entities/news';
@@ -46,6 +47,7 @@ export default function NewsListPage() {
     const { data: news, isLoading, refetch, error } = useNewsList(filters);
 
     const deleteNewsMutation = useDeleteNews();
+    const { openModal, opened, closeModal, confirm, config } = useConfirmationModal();
     const updateStatusMutation = useUpdateNewsStatus();
 
     const handleSearch = (value: string) => {
@@ -65,9 +67,17 @@ export default function NewsListPage() {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this news?')) {
-            await deleteNewsMutation.mutateAsync(id);
-        }
+        openModal({
+            title: 'Delete News',
+            message: 'Are you sure you want to delete this news? This action cannot be undone.',
+            type: 'delete',
+            confirmLabel: 'Delete',
+            cancelLabel: 'Cancel',
+            confirmColor: 'red',
+            onConfirm: async () => {
+                await deleteNewsMutation.mutateAsync(id);
+            },
+        });
     };
 
     const handleStatusToggle = async (id: string, isActive: boolean) => {
@@ -217,30 +227,45 @@ export default function NewsListPage() {
     );
 
     return (
-        <ListLayout
-            title="News & Updates"
-            description="Manage your news articles and updates"
-            rightSection={
-                <Button
-                    leftSection={<IconPlus size={16} />}
-                    onClick={() => navigate(paths.dashboard.news.create)}
-                >
-                    Create News
-                </Button>
-            }
-            filters={filtersComponent}
-        >
-            <DataTable
-                records={news || []}
-                columns={columns}
-                fetching={isLoading}
-                totalRecords={news?.length || 0}
-                recordsPerPage={filters.limit || 10}
-                page={filters.page || 1}
-                onPageChange={handlePageChange}
-                noRecordsText="No news found"
-                minHeight={200}
+        <>
+            <ListLayout
+                title="News & Updates"
+                description="Manage your news articles and updates"
+                rightSection={
+                    <Button
+                        leftSection={<IconPlus size={16} />}
+                        onClick={() => navigate(paths.dashboard.news.create)}
+                    >
+                        Create News
+                    </Button>
+                }
+                filters={filtersComponent}
+            >
+                <DataTable
+                    records={news || []}
+                    columns={columns}
+                    fetching={isLoading}
+                    totalRecords={news?.length || 0}
+                    recordsPerPage={filters.limit || 10}
+                    page={filters.page || 1}
+                    onPageChange={handlePageChange}
+                    noRecordsText="No news found"
+                    minHeight={200}
+                />
+            </ListLayout>
+
+            <ConfirmationModal
+                opened={opened}
+                onClose={closeModal}
+                onConfirm={confirm}
+                title={config.title || ''}
+                message={config.message || ''}
+                confirmLabel={config.confirmLabel}
+                cancelLabel={config.cancelLabel}
+                confirmColor={config.confirmColor}
+                type={config.type}
+                loading={deleteNewsMutation.isPending}
             />
-        </ListLayout>
+        </>
     );
 }

@@ -10,6 +10,7 @@ import {
     Stack,
     FileInput,
     Alert,
+    Modal,
 } from '@mantine/core';
 import { IconUpload, IconX, IconPhoto, IconAlertCircle } from '@tabler/icons-react';
 import { app } from '@/config';
@@ -42,6 +43,8 @@ export function FileUpload({
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [urlModalOpened, setUrlModalOpened] = useState(false);
+    const [urlInput, setUrlInput] = useState('');
 
     // Helper function to get full image URL
     const getImageUrl = (imageValue: string | File | null): string | null => {
@@ -105,6 +108,24 @@ export function FileUpload({
         setPreviewUrl(getImageUrl(url));
     };
 
+    // Handle URL modal
+    const openUrlModal = () => {
+        setUrlInput('');
+        setUrlModalOpened(true);
+    };
+
+    const handleUrlSubmit = () => {
+        if (urlInput.trim()) {
+            handleUrlChange(urlInput.trim());
+            setUrlModalOpened(false);
+        }
+    };
+
+    const handleUrlCancel = () => {
+        setUrlInput('');
+        setUrlModalOpened(false);
+    };
+
     // Clear file
     const clearFile = () => {
         onChange(null);
@@ -118,135 +139,166 @@ export function FileUpload({
     const currentValue = value instanceof File ? value.name : value || '';
 
     return (
-        <Stack gap="sm">
-            <Text size="sm" fw={500}>
-                {label}
-                {required && <span style={{ color: 'red' }}> *</span>}
-            </Text>
-
-            {description && (
-                <Text size="xs" c="dimmed">
-                    {description}
+        <>
+            <Stack gap="sm">
+                <Text size="sm" fw={500}>
+                    {label}
+                    {required && <span style={{ color: 'red' }}> *</span>}
                 </Text>
-            )}
 
-            {/* File Upload Area */}
-            <Box
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                style={{
-                    border: `2px dashed ${dragActive ? 'var(--mantine-color-blue-6)' : 'var(--mantine-color-gray-4)'}`,
-                    borderRadius: 'var(--mantine-radius-md)',
-                    padding: 'var(--mantine-spacing-md)',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    backgroundColor: dragActive ? 'var(--mantine-color-blue-0)' : 'transparent',
-                    transition: 'all 0.2s ease',
-                }}
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <Stack gap="sm" align="center">
-                    <IconPhoto size={48} color="var(--mantine-color-gray-5)" />
-                    <Text size="sm" c="dimmed">
-                        {dragActive ? 'Drop file here' : 'Click to upload or drag and drop'}
-                    </Text>
+                {description && (
                     <Text size="xs" c="dimmed">
-                        {accept === 'image/*' ? 'PNG, JPG, JPEG, WebP, GIF up to 100MB' : 'Any file type'}
+                        {description}
                     </Text>
-                </Stack>
-            </Box>
+                )}
 
-            {/* Hidden file input */}
-            <FileInput
-                accept={accept}
-                multiple={multiple}
-                onChange={(file: File | File[] | null) => {
-                    const singleFile = Array.isArray(file) ? file[0] : file;
-                    if (singleFile) {
-                        onChange(singleFile);
-                        if (preview && singleFile.type.startsWith('image/')) {
-                            const url = URL.createObjectURL(singleFile);
-                            setPreviewUrl(url);
-                        }
-                    } else {
-                        onChange(null);
-                        setPreviewUrl(null);
-                    }
-                }}
-                style={{ display: 'none' }}
-            />
-
-            {/* Current file display */}
-            {currentValue && (
+                {/* File Upload Area */}
                 <Box
-                    p="sm"
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
                     style={{
-                        border: '1px solid var(--mantine-color-gray-3)',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        backgroundColor: 'var(--mantine-color-gray-0)',
+                        border: `2px dashed ${dragActive ? 'var(--mantine-color-blue-6)' : 'var(--mantine-color-gray-4)'}`,
+                        borderRadius: 'var(--mantine-radius-md)',
+                        padding: 'var(--mantine-spacing-md)',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        backgroundColor: dragActive ? 'var(--mantine-color-blue-0)' : 'transparent',
+                        transition: 'all 0.2s ease',
                     }}
+                    onClick={() => fileInputRef.current?.click()}
                 >
-                    <Group justify="space-between">
-                        <Group gap="sm">
-                            <IconPhoto size={16} />
-                            <Text size="sm" truncate style={{ flex: 1 }}>
-                                {currentValue}
-                            </Text>
-                        </Group>
-                        <ActionIcon color="red" size="sm" onClick={clearFile}>
-                            <IconX size={14} />
-                        </ActionIcon>
-                    </Group>
+                    <Stack gap="sm" align="center">
+                        <IconPhoto size={48} color="var(--mantine-color-gray-5)" />
+                        <Text size="sm" c="dimmed">
+                            {dragActive ? 'Drop file here' : 'Click to upload or drag and drop'}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                            {accept === 'image/*' ? 'PNG, JPG, JPEG, WebP, GIF up to 100MB' : 'Any file type'}
+                        </Text>
+                    </Stack>
                 </Box>
-            )}
 
-            {/* URL Input Alternative */}
-            <TextInput
-                label="Or enter image URL"
-                placeholder="https://example.com/image.jpg"
-                value={typeof value === 'string' ? value : ''}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUrlChange(e.currentTarget.value)}
-                rightSection={
-                    <ActionIcon
-                        variant="subtle"
-                        onClick={() => {
-                            const url = prompt('Enter image URL:');
-                            if (url) handleUrlChange(url);
+                {/* Hidden file input */}
+                <FileInput
+                    accept={accept}
+                    multiple={multiple}
+                    onChange={(file: File | File[] | null) => {
+                        const singleFile = Array.isArray(file) ? file[0] : file;
+                        if (singleFile) {
+                            onChange(singleFile);
+                            if (preview && singleFile.type.startsWith('image/')) {
+                                const url = URL.createObjectURL(singleFile);
+                                setPreviewUrl(url);
+                            }
+                        } else {
+                            onChange(null);
+                            setPreviewUrl(null);
+                        }
+                    }}
+                    style={{ display: 'none' }}
+                />
+
+                {/* Current file display */}
+                {currentValue && (
+                    <Box
+                        p="sm"
+                        style={{
+                            border: '1px solid var(--mantine-color-gray-3)',
+                            borderRadius: 'var(--mantine-radius-sm)',
+                            backgroundColor: 'var(--mantine-color-gray-0)',
                         }}
                     >
-                        <IconUpload size={16} />
-                    </ActionIcon>
-                }
-            />
+                        <Group justify="space-between">
+                            <Group gap="sm">
+                                <IconPhoto size={16} />
+                                <Text size="sm" truncate style={{ flex: 1 }}>
+                                    {currentValue}
+                                </Text>
+                            </Group>
+                            <ActionIcon color="red" size="sm" onClick={clearFile}>
+                                <IconX size={14} />
+                            </ActionIcon>
+                        </Group>
+                    </Box>
+                )}
 
-            {/* Image Preview */}
-            {preview && (previewUrl || (value && getImageUrl(value))) && (
-                <Box>
-                    <Text size="sm" fw={500} mb="xs">
-                        Preview:
-                    </Text>
-                    <Image
-                        src={previewUrl || (value ? getImageUrl(value) : '') || ''}
-                        alt="Preview"
-                        style={{
-                            maxWidth: '100%',
-                            maxHeight: '200px',
-                            objectFit: 'cover',
-                            borderRadius: 'var(--mantine-radius-sm)',
+                {/* URL Input Alternative */}
+                <TextInput
+                    label="Or enter image URL"
+                    placeholder="https://example.com/image.jpg"
+                    value={typeof value === 'string' ? value : ''}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUrlChange(e.currentTarget.value)}
+                    rightSection={
+                        <ActionIcon
+                            variant="subtle"
+                            onClick={openUrlModal}
+                        >
+                            <IconUpload size={16} />
+                        </ActionIcon>
+                    }
+                />
+
+                {/* Image Preview */}
+                {preview && (previewUrl || (value && getImageUrl(value))) && (
+                    <Box>
+                        <Text size="sm" fw={500} mb="xs">
+                            Preview:
+                        </Text>
+                        <Image
+                            src={previewUrl || (value ? getImageUrl(value) : '') || ''}
+                            alt="Preview"
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '200px',
+                                objectFit: 'cover',
+                                borderRadius: 'var(--mantine-radius-sm)',
+                            }}
+                        />
+                    </Box>
+                )}
+
+                {/* Error message */}
+                {error && (
+                    <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
+                        {error}
+                    </Alert>
+                )}
+            </Stack>
+
+            {/* URL Input Modal */}
+            <Modal
+                opened={urlModalOpened}
+                onClose={handleUrlCancel}
+                title="Enter Image URL"
+                centered
+                size="sm"
+            >
+                <Stack gap="md">
+                    <TextInput
+                        label="Image URL"
+                        placeholder="https://example.com/image.jpg"
+                        value={urlInput}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrlInput(e.currentTarget.value)}
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === 'Enter') {
+                                handleUrlSubmit();
+                            }
                         }}
+                        autoFocus
                     />
-                </Box>
-            )}
-
-            {/* Error message */}
-            {error && (
-                <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
-                    {error}
-                </Alert>
-            )}
-        </Stack>
+                    <Group justify="flex-end" gap="sm">
+                        <Button variant="light" onClick={handleUrlCancel}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleUrlSubmit} disabled={!urlInput.trim()}>
+                            Add URL
+                        </Button>
+                    </Group>
+                </Stack>
+            </Modal>
+        </>
     );
 }
 
