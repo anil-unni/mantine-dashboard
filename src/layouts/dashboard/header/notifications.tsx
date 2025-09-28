@@ -12,6 +12,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useGetNotifications } from '@/hooks/api';
 import { Notification } from './notification';
+import dayjs from 'dayjs';
 
 type NotificationsProps = Omit<ActionIconProps, 'children' | 'c' | 'onClick' | 'size'> &
   ElementProps<'button', keyof ActionIconProps>;
@@ -55,8 +56,8 @@ export function Notifications(props: NotificationsProps) {
               <Notification
                 key={notification.id}
                 title={notification.title}
-                receivedAt={notification.receivedAt}
-                scope={notification.type.split(':').at(0)}
+                receivedAt={dayjs(notification.receivedAt)}
+                scope={notification.type.split(':')[0]}
                 icon={
                   <Avatar
                     src={notification.sentBy.avatarUrl}

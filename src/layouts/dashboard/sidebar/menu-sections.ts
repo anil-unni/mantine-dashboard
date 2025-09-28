@@ -30,25 +30,4 @@ export const menu: MenuItem[] = [
       },
     ],
   },
-
-  {
-    header: 'Management',
-    section: [
-      {
-        name: 'News',
-        icon: PiNewspaperDuotone,
-        href: paths.dashboard.management.news.root,
-        dropdownItems: [
-          {
-            name: 'List',
-            href: paths.dashboard.management.news.list,
-          },
-          {
-            name: 'Create',
-            href: paths.dashboard.management.news.create,
-          },
-        ],
-      },
-    ],
-  },  
 ];

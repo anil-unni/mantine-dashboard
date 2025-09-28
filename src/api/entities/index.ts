@@ -1,6 +1,2 @@
-export * from './atoms';
-export * from './companies';
-export * from './customers';
-export * from './news';
-export * from './notifications';
 export * from './users';
+export * from './notifications';
