@@ -4,14 +4,18 @@ import { GroupProps, ElementProps, Title, Breadcrumbs, Anchor, Text, Group } fro
 
 interface PageHeaderProps
   extends Omit<GroupProps, 'title'>,
-    ElementProps<'header', keyof GroupProps> {
+  ElementProps<'header', keyof GroupProps> {
   title: ReactNode;
+  description?: string;
+  rightSection?: ReactNode;
   breadcrumbs?: { label: string; href?: string }[];
 }
 
 export function PageHeader({
   children,
   title,
+  description,
+  rightSection,
   breadcrumbs,
   className,
   mb = 'xl',
@@ -23,6 +27,12 @@ export function PageHeader({
         <Title component="h2" order={2}>
           {title}
         </Title>
+
+        {description && (
+          <Text c="dimmed" fz="sm" mt="xs">
+            {description}
+          </Text>
+        )}
 
         {breadcrumbs && (
           <Breadcrumbs mt="sm">
@@ -48,7 +58,7 @@ export function PageHeader({
         )}
       </div>
 
-      {children}
+      {rightSection || children}
     </Group>
   );
 }

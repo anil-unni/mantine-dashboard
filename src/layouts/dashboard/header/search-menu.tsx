@@ -1,36 +1,44 @@
 import { Spotlight, SpotlightActionData } from '@mantine/spotlight';
-import {
-  PiHouseDuotone,
-  PiSquaresFourDuotone,
-  PiFileDuotone,
-  PiMagnifyingGlassBold as SearchIcon,
-} from 'react-icons/pi';
+import { PiMagnifyingGlassBold as SearchIcon } from 'react-icons/pi';
+import { useNavigate } from 'react-router-dom';
+import { menu } from '@/layouts/dashboard/sidebar/menu-sections';
 
-const actions: SpotlightActionData[] = [
-  {
-    id: 'home',
-    label: 'Home',
-    description: 'Get to home page',
-    onClick: () => console.log('Home'),
-    leftSection: <PiHouseDuotone size="1.5rem" />,
-  },
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    description: 'Get full information about current system status',
-    onClick: () => console.log('Dashboard'),
-    leftSection: <PiSquaresFourDuotone size="1.5rem" />,
-  },
-  {
-    id: 'documentation',
-    label: 'Documentation',
-    description: 'Visit documentation to lean more about all features',
-    onClick: () => console.log('Documentation'),
-    leftSection: <PiFileDuotone size="1.5rem" />,
-  },
-];
+function generateActionsFromMenu(): SpotlightActionData[] {
+  const navigate = useNavigate();
+  const actions: SpotlightActionData[] = [];
+
+  menu.forEach((menuGroup) => {
+    menuGroup.section.forEach((item) => {
+      // Add main menu item
+      actions.push({
+        id: item.href,
+        label: item.name,
+        description: `Navigate to ${item.name}`,
+        onClick: () => navigate(item.href),
+        leftSection: <item.icon size="1.5rem" />,
+      });
+
+      // Add dropdown items if they exist
+      if (item.dropdownItems) {
+        item.dropdownItems.forEach((dropdownItem) => {
+          actions.push({
+            id: dropdownItem.href,
+            label: `${item.name} - ${dropdownItem.name}`,
+            description: `Navigate to ${dropdownItem.name}`,
+            onClick: () => navigate(dropdownItem.href),
+            leftSection: <item.icon size="1.5rem" />,
+          });
+        });
+      }
+    });
+  });
+
+  return actions;
+}
 
 export function SearchMenu() {
+  const actions = generateActionsFromMenu();
+
   return (
     <Spotlight
       actions={actions}

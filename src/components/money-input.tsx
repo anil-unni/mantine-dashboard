@@ -31,7 +31,7 @@ export const MoneyInput = forwardRef<HTMLDivElement, MoneyInputProps>(
       required,
       value,
       onChange,
-      currency = 'USD',
+      currency = 'INR',
       ...rest
     },
     ref

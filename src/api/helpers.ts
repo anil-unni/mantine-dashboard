@@ -19,8 +19,12 @@ interface EnhancedMutationParams<
   TContext = unknown,
 > extends Omit<
     UseMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationFn' | 'onSuccess' | 'onError' | 'onSettled'
+    'mutationFn' | 'onSuccess' | 'onError' | 'onSettled' | 'onMutate'
   > {
+  onMutate?: (
+    variables: TVariables,
+    context: TContext
+  ) => unknown;
   onSuccess?: (
     data: TData,
     variables: TVariables,
@@ -216,12 +220,14 @@ export function createPostMutationHook<
     return useMutation({
       ...rMutationParams,
       mutationFn,
+      onMutate: (variables, context) =>
+        rMutationParams?.onMutate?.(variables.variables, context),
       onSuccess: (data, variables, context) =>
-        rMutationParams?.onSuccess?.(data, variables, context, queryClient),
+        rMutationParams?.onSuccess?.(data as any, variables.variables, context, queryClient),
       onError: (error, variables, context) =>
-        rMutationParams?.onError?.(error, variables, context, queryClient),
+        rMutationParams?.onError?.(error, variables.variables, context, queryClient),
       onSettled: (data, error, variables, context) =>
-        rMutationParams?.onSettled?.(data, error, variables, context, queryClient),
+        rMutationParams?.onSettled?.(data as any, error, variables.variables, context, queryClient),
     });
   };
 }
@@ -293,12 +299,14 @@ export function createPutMutationHook<
     return useMutation({
       ...rMutationParams,
       mutationFn,
+      onMutate: (variables, context) =>
+        rMutationParams?.onMutate?.(variables.variables, context),
       onSuccess: (data, variables, context) =>
-        rMutationParams?.onSuccess?.(data, variables, context, queryClient),
+        rMutationParams?.onSuccess?.(data as any, variables.variables, context, queryClient),
       onError: (error, variables, context) =>
-        rMutationParams?.onError?.(error, variables, context, queryClient),
+        rMutationParams?.onError?.(error, variables.variables, context, queryClient),
       onSettled: (data, error, variables, context) =>
-        rMutationParams?.onSettled?.(data, error, variables, context, queryClient),
+        rMutationParams?.onSettled?.(data as any, error, variables.variables, context, queryClient),
     });
   };
 }
@@ -357,12 +365,14 @@ export function createDeleteMutationHook<
     return useMutation({
       ...rMutationParams,
       mutationFn,
+      onMutate: (variables, context) =>
+        rMutationParams?.onMutate?.(variables.model, context),
       onSuccess: (data, variables, context) =>
-        rMutationParams?.onSuccess?.(data, variables, context, queryClient),
+        rMutationParams?.onSuccess?.(data as any, variables.model, context, queryClient),
       onError: (error, variables, context) =>
-        rMutationParams?.onError?.(error, variables, context, queryClient),
+        rMutationParams?.onError?.(error, variables.model, context, queryClient),
       onSettled: (data, error, variables, context) =>
-        rMutationParams?.onSettled?.(data, error, variables, context, queryClient),
+        rMutationParams?.onSettled?.(data as any, error, variables.model, context, queryClient),
     });
   };
 }

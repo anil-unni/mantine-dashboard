@@ -1,10 +1,10 @@
 
-import { Container, Title, Text, Stack, Button } from '@mantine/core';
+import { Box, Title, Text, Stack, Button } from '@mantine/core';
 import { PiRocketDuotone } from 'react-icons/pi';
 
 export function Welcome() {
   return (
-    <Container size="md">
+    <Box p="md">
       <Stack align="center" gap="xl">
         <PiRocketDuotone size={64} style={{ color: 'var(--mantine-color-blue-6)' }} />
         <Title order={1} ta="center">
@@ -18,6 +18,6 @@ export function Welcome() {
           Get Started
         </Button>
       </Stack>
-    </Container>
+    </Box>
   );
 }

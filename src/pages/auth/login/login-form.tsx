@@ -20,7 +20,7 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
 
   const form = useForm({
     mode: 'uncontrolled',
-    validate: zodResolver(LoginRequestSchema),
+    validate: zodResolver(LoginRequestSchema as any),
     initialValues: { email: 'john.doe@example.com', password: '123456789', remember: false },
   });
 

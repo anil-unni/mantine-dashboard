@@ -1,5 +1,6 @@
 export * from './checkbox';
 export * from './date-picker-input';
+export * from './file-upload';
 export * from './money-input';
 export * from './number-input';
 export * from './password-input';

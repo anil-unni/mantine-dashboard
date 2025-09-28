@@ -73,6 +73,27 @@ const router = createBrowserRouter([
         path: paths.dashboard.home,
         element: LazyPage(() => import('@/pages/dashboard/home')),
       },
+      // News routes
+      {
+        path: paths.dashboard.news.list,
+        element: LazyPage(() => import('@/pages/dashboard/news')),
+      },
+      {
+        path: paths.dashboard.news.create,
+        element: LazyPage(() => import('@/pages/dashboard/news/create')),
+      },
+      {
+        path: `${paths.dashboard.news.edit}/:id`,
+        element: LazyPage(() => import('@/pages/dashboard/news/edit')),
+      },
+      {
+        path: `${paths.dashboard.news.view}/:id`,
+        element: LazyPage(() => import('@/pages/dashboard/news/view')),
+      },
+      {
+        path: paths.dashboard.news.page,
+        element: LazyPage(() => import('@/pages/dashboard/news/page')),
+      },
     ],
   },
 ]);

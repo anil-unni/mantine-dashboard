@@ -1,9 +1,17 @@
 {
   "compilerOptions": {
-    "types": ["node", "@testing-library/jest-dom", "vitest/globals"],
+    "types": [
+      "react",
+      "react-dom",
+      "vite/client"
+    ],
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "es2021"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "es2022"
+    ],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -11,15 +19,22 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"],
-      "@test-utils": ["./test-utils"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@test-utils": [
+        "./test-utils"
+      ]
     }
   },
-  "include": ["src", "test-utils"]
+  "include": [
+    "src",
+    "test-utils"
+  ]
 }

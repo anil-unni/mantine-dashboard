@@ -8,14 +8,31 @@ interface LinkChipProps extends ChipProps {
 }
 
 export const LinkChip = forwardRef<HTMLInputElement, LinkChipProps>(
-  ({ size = 'xs', variant = 'outline', checked = false, inline, href, ...props }, ref) => (
-    <Chip
-      {...props}
-      style={{ ...props.style, display: inline ? 'inline-block' : 'block' }}
-      wrapperProps={href ? { component: NavLink, to: href, ref } : { ref }}
-      size={size}
-      variant={variant}
-      checked={checked}
-    />
-  )
+  ({ size = 'xs', variant = 'outline', checked = false, inline, href, ...props }, ref) => {
+    if (href) {
+      return (
+        <Chip
+          {...props}
+          style={{ ...props.style, display: inline ? 'inline-block' : 'block' }}
+          wrapperProps={{}}
+          size={size}
+          variant={variant}
+          checked={checked}
+          component={NavLink}
+          {...({ to: href } as any)}
+        />
+      );
+    }
+
+    return (
+      <Chip
+        {...props}
+        style={{ ...props.style, display: inline ? 'inline-block' : 'block' }}
+        wrapperProps={{}}
+        size={size}
+        variant={variant}
+        checked={checked}
+      />
+    );
+  }
 );

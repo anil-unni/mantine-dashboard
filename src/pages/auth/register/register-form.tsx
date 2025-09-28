@@ -3,7 +3,7 @@ import {
   Anchor,
   Button,
   Checkbox,
-  Group,
+  Grid,
   PasswordInput,
   Stack,
   StackProps,
@@ -19,10 +19,14 @@ interface RegisterFormProps extends Omit<StackProps, 'children'> {
 export function RegisterForm({ onSuccess, ...props }: RegisterFormProps) {
   return (
     <Stack {...props}>
-      <Group grow>
-        <TextInput label="First name" required />
-        <TextInput label="Last name" required />
-      </Group>
+      <Grid>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <TextInput label="First name" required />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <TextInput label="Last name" required />
+        </Grid.Col>
+      </Grid>
       <TextInput label="Email" required />
       <PasswordInput label="Password" required />
       <Checkbox

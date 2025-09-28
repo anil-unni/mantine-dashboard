@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@dinero.js/currencies':
+        specifier: 2.0.0-alpha.1
+        version: 2.0.0-alpha.1
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -437,6 +440,9 @@ packages:
 
   '@dinero.js/core@2.0.0-alpha.14':
     resolution: {integrity: sha512-CtKELJ783joUbaU62fRM2xDXb4XYSy0MgOuIkPWgVOS3SYKKb6+2Ec9bNlvrW8lsPROz/RsvCuYVTphrZ79twg==}
+
+  '@dinero.js/currencies@2.0.0-alpha.1':
+    resolution: {integrity: sha512-JoKY6q3AOm2II44qLp6VMGn+j+p6QC39m3DFogKZXsucWIIvzt7c2v04DZrrHWLNnDYNzITOnbQ7f2pGbONjig==}
 
   '@dinero.js/currencies@2.0.0-alpha.14':
     resolution: {integrity: sha512-Ck5ZLjRI7Pl7Y4VkeOst4WEwiN5vZezv8GHcXWsVLUfTNsmkV37VeLYDRAuTUP4akEJyIry+1o1qHYNtLq3eNw==}
@@ -4802,6 +4808,8 @@ snapshots:
     dependencies:
       '@dinero.js/currencies': 2.0.0-alpha.14
 
+  '@dinero.js/currencies@2.0.0-alpha.1': {}
+
   '@dinero.js/currencies@2.0.0-alpha.14': {}
 
   '@dnd-kit/accessibility@3.1.1(react@19.1.1)':
@@ -6005,8 +6013,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.39.1(typescript@5.9.2)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.39.1(typescript@5.9.2)
-      '@typescript-eslint/types': 8.39.1
+      '@typescript-eslint/tsconfig-utils': 8.44.1(typescript@5.9.2)
+      '@typescript-eslint/types': 8.44.1
       debug: 4.4.3
       typescript: 5.9.2
     transitivePeerDependencies:

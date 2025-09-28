@@ -16,5 +16,13 @@ export const paths = {
   dashboard: {
     root: '/dashboard',
     home: '/dashboard/home',
+    news: {
+      root: '/dashboard/news',
+      list: '/dashboard/news',
+      create: '/dashboard/news/create',
+      edit: '/dashboard/news/edit',
+      view: '/dashboard/news/view',
+      page: '/dashboard/news/page',
+    },
   },
 };
