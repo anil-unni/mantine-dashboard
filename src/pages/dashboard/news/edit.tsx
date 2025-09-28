@@ -66,8 +66,8 @@ export default function EditNewsPage() {
       isActive: true,
     },
     validate: {
-      title: (value: string) => (!value ? 'Title is required' : null),
-      description: (value: string) => (!value ? 'Description is required' : null),
+      title: (value: string | undefined) => (!value ? 'Title is required' : null),
+      description: (value: string | undefined) => (!value ? 'Description is required' : null),
     },
   });
 

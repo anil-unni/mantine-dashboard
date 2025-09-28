@@ -7,14 +7,14 @@ import {
 import { ActionIcon, Group, GroupProps, Tooltip } from '@mantine/core';
 import { useConfirmationModal } from '@/components/confirmation-modal';
 
-export interface DataTableActionsProps extends GroupProps {
+export interface DataTableActionsProps extends Omit<GroupProps, 'wrap'> {
   onEdit?: () => void;
   onView?: () => void;
   onDelete?: () => void;
   onRestore?: () => void;
   gap?: string | number;
   justify?: string;
-  wrap?: string;
+  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
   children?: React.ReactNode;
 }
 

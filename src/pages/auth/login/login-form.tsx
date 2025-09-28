@@ -24,9 +24,9 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
     initialValues: { email: 'switrusAdmin', password: '123Admin@!', remember: false },
   });
 
-  const handleSubmit = form.onSubmit((variables) => {
+  const handleSubmit = form.onSubmit((values) => {
     login(
-      { variables },
+      values,
       {
         onSuccess: () => setIsAuthenticated(true),
         //  onError: (error) => handleFormErrors(form, error),
