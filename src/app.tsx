@@ -18,6 +18,7 @@ import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { NavigationProgress } from '@mantine/nprogress';
+import { DatesProvider } from '@mantine/dates';
 import { queryClient } from '@/api/query-client';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Router } from '@/routes/router';
@@ -30,11 +31,13 @@ export function App() {
         <ReactQueryDevtools initialIsOpen={false} />
         <AuthProvider>
           <MantineProvider theme={theme}>
-            <Notifications position="bottom-center" />
-            <NavigationProgress />
-            <ModalsProvider>
-              <Router />
-            </ModalsProvider>
+            <DatesProvider settings={{ firstDayOfWeek: 0 }}>
+              <Notifications position="bottom-center" />
+              <NavigationProgress />
+              <ModalsProvider>
+                <Router />
+              </ModalsProvider>
+            </DatesProvider>
           </MantineProvider>
         </AuthProvider>
       </QueryClientProvider>

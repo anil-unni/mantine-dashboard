@@ -63,36 +63,21 @@ export default function CreateNewsPage() {
             isActive: true,
         },
         validate: {
-            title: (value: string) => (!value || value.trim() === '' ? 'Title is required' : null),
-            description: (value: string) => (!value || value.trim() === '' ? 'Description is required' : null),
-            content: (value: string) => (!value || value.trim() === '' ? 'Content is required' : null),
-            author: (value: string) => (!value || value.trim() === '' ? 'Author is required' : null),
-            category: (value: string) => (!value || value.trim() === '' ? 'Category is required' : null),
-            publish_date: (value: string) => (!value ? 'Publish date is required' : null),
-            priority: (value: number) => (!value || value < 1 ? 'Priority must be at least 1' : null),
-            'seodetails.title': (value: string) => (!value || value.trim() === '' ? 'SEO title is required' : null),
-            'seodetails.description': (value: string) => (!value || value.trim() === '' ? 'SEO description is required' : null),
-            'seodetails.keywords': (value: string) => (!value || value.trim() === '' ? 'SEO keywords are required' : null),
-            sources: (value: NewsSource[]) => {
-                if (!value || value.length === 0) {
-                    return 'At least one source is required';
-                }
-                for (let i = 0; i < value.length; i++) {
-                    const source = value[i];
-                    if (!source.name || source.name.trim() === '') {
-                        return `Source ${i + 1} name is required`;
-                    }
-                    if (!source.url || source.url.trim() === '') {
-                        return `Source ${i + 1} URL is required`;
-                    }
-                    // Basic URL validation
-                    try {
-                        new URL(source.url);
-                    } catch {
-                        return `Source ${i + 1} URL must be a valid URL`;
-                    }
-                }
-                return null;
+            title: (value: string | undefined) => (!value || value.trim() === '' ? 'Title is required' : null),
+            description: (value: string | undefined) => (!value || value.trim() === '' ? 'Description is required' : null),
+            content: (value: string | undefined) => (!value || value.trim() === '' ? 'Content is required' : null),
+            author: (value: string | undefined) => (!value || value.trim() === '' ? 'Author is required' : null),
+            category: (value: string | undefined) => (!value || value.trim() === '' ? 'Category is required' : null),
+            priority: (value: number | undefined) => (!value || value < 1 ? 'Priority must be at least 1' : null),
+            publish_date: (value: string | undefined) => (!value || value.trim() === '' ? 'Publish date is required' : null),
+            sources: {
+                name: (value: string | undefined) => (!value || value.trim() === '' ? 'Source name is required' : null),
+                url: (value: string | undefined) => (!value || value.trim() === '' ? 'Source URL is required' : null),
+            },
+            seodetails: {
+                title: (value: string | undefined) => (!value || value.trim() === '' ? 'SEO title is required' : null),
+                description: (value: string | undefined) => (!value || value.trim() === '' ? 'SEO description is required' : null),
+                keywords: (value: string | undefined) => (!value || value.trim() === '' ? 'SEO keywords are required' : null),
             },
         },
     });
@@ -105,9 +90,9 @@ export default function CreateNewsPage() {
         title: 'Unsaved Changes',
     });
 
-    const handleSubmit = async (values: NewsCreateRequest) => {
+    const handleSubmit = async (values: any) => {
         try {
-            await createNewsMutation.mutateAsync(values);
+            await createNewsMutation.mutateAsync(values as NewsCreateRequest);
             handleNavigation(paths.dashboard.news.list);
         } catch (error) {
             // Error handling is done in the mutation

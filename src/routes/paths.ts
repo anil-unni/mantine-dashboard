@@ -16,6 +16,7 @@ export const paths = {
   dashboard: {
     root: '/dashboard',
     home: '/dashboard/home',
+    overview: '/dashboard/overview',
     news: {
       root: '/dashboard/news',
       list: '/dashboard/news',

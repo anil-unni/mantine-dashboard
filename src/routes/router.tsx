@@ -73,6 +73,10 @@ const router = createBrowserRouter([
         path: paths.dashboard.home,
         element: LazyPage(() => import('@/pages/dashboard/home')),
       },
+      {
+        path: paths.dashboard.overview,
+        element: LazyPage(() => import('@/pages/dashboard/overview')),
+      },
       // News routes
       {
         path: paths.dashboard.news.list,

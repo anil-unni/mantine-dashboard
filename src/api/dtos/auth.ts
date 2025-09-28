@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { dateSchema } from '@/utilities/date';
 
 export const LoginRequestSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1), // Changed from email validation to accept username
   password: z.string(),
   remember: z.boolean().optional(),
 });

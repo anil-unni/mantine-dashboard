@@ -5,6 +5,7 @@ import {
   PiPlusDuotone,
   PiListDuotone,
   PiGearDuotone,
+  PiChartBarDuotone,
 } from 'react-icons/pi';
 import { paths } from '@/routes/paths';
 
@@ -26,10 +27,15 @@ export const menu: MenuItem[] = [
   {
     header: 'Overview',
     section: [
+      // {
+      //   name: 'Welcome',
+      //   href: paths.dashboard.home,
+      //   icon: PiStarDuotone,
+      // },
       {
-        name: 'Welcome',
-        href: paths.dashboard.home,
-        icon: PiStarDuotone,
+        name: 'Dashboard',
+        href: paths.dashboard.overview,
+        icon: PiChartBarDuotone,
       },
     ],
   },

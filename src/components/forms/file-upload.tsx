@@ -181,15 +181,17 @@ export function FileUpload({
                 </Box>
 
                 {/* Hidden file input */}
-                <FileInput
+                <input
+                    ref={fileInputRef}
+                    type="file"
                     accept={accept}
                     multiple={multiple}
-                    onChange={(file: File | File[] | null) => {
-                        const singleFile = Array.isArray(file) ? file[0] : file;
-                        if (singleFile) {
-                            onChange(singleFile);
-                            if (preview && singleFile.type.startsWith('image/')) {
-                                const url = URL.createObjectURL(singleFile);
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const file = e.target.files?.[0] || null;
+                        if (file) {
+                            onChange(file);
+                            if (preview && file.type.startsWith('image/')) {
+                                const url = URL.createObjectURL(file);
                                 setPreviewUrl(url);
                             }
                         } else {
@@ -211,34 +213,52 @@ export function FileUpload({
                         }}
                     >
                         <Group justify="space-between">
-                            <Group gap="sm">
+                            <Group gap="sm" style={{ flex: 1, minWidth: 0 }}>
                                 <IconPhoto size={16} />
-                                <Text size="sm" truncate style={{ flex: 1 }}>
+                                <Text
+                                    size="sm"
+                                    style={{
+                                        flex: 1,
+                                        minWidth: 0,
+                                        wordBreak: 'break-all',
+                                        lineHeight: 1.2
+                                    }}
+                                    title={currentValue}
+                                >
                                     {currentValue}
                                 </Text>
                             </Group>
-                            <ActionIcon color="red" size="sm" onClick={clearFile}>
+                            <ActionIcon
+                                color="red"
+                                size="sm"
+                                onClick={clearFile}
+                                title="Remove file"
+                                variant="subtle"
+                            >
                                 <IconX size={14} />
                             </ActionIcon>
                         </Group>
                     </Box>
                 )}
 
-                {/* URL Input Alternative */}
-                <TextInput
-                    label="Or enter image URL"
-                    placeholder="https://example.com/image.jpg"
-                    value={typeof value === 'string' ? value : ''}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUrlChange(e.currentTarget.value)}
-                    rightSection={
-                        <ActionIcon
-                            variant="subtle"
-                            onClick={openUrlModal}
-                        >
-                            <IconUpload size={16} />
-                        </ActionIcon>
-                    }
-                />
+                {/* URL Input Alternative - Only show when no file is selected */}
+                {!currentValue && (
+                    <TextInput
+                        label="Or enter image URL"
+                        placeholder="https://example.com/image.jpg"
+                        value={typeof value === 'string' ? value : ''}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUrlChange(e.currentTarget.value)}
+                        rightSection={
+                            <ActionIcon
+                                variant="subtle"
+                                onClick={openUrlModal}
+                                title="Open URL input modal"
+                            >
+                                <IconUpload size={16} />
+                            </ActionIcon>
+                        }
+                    />
+                )}
 
                 {/* Image Preview */}
                 {preview && (previewUrl || (value && getImageUrl(value))) && (
@@ -246,16 +266,28 @@ export function FileUpload({
                         <Text size="sm" fw={500} mb="xs">
                             Preview:
                         </Text>
-                        <Image
-                            src={previewUrl || (value ? getImageUrl(value) : '') || ''}
-                            alt="Preview"
+                        <Box
                             style={{
-                                maxWidth: '100%',
-                                maxHeight: '200px',
-                                objectFit: 'cover',
+                                border: '1px solid var(--mantine-color-gray-3)',
                                 borderRadius: 'var(--mantine-radius-sm)',
+                                padding: 'var(--mantine-spacing-xs)',
+                                backgroundColor: 'var(--mantine-color-gray-0)',
                             }}
-                        />
+                        >
+                            <Image
+                                src={previewUrl || (value ? getImageUrl(value) : '') || ''}
+                                alt="Preview"
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '200px',
+                                    objectFit: 'cover',
+                                    borderRadius: 'var(--mantine-radius-xs)',
+                                }}
+                                onError={(e) => {
+                                    console.warn('Failed to load image preview:', e);
+                                }}
+                            />
+                        </Box>
                     </Box>
                 )}
 
@@ -433,10 +465,17 @@ export function MultipleFileUpload({
             </Box>
 
             {/* Hidden file input */}
-            <FileInput
+            <input
+                ref={fileInputRef}
+                type="file"
                 accept={accept}
                 multiple
-                onChange={handleFileSelect}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const files = e.target.files ? Array.from(e.target.files) : [];
+                    if (files.length > 0) {
+                        handleFileSelect(files);
+                    }
+                }}
                 style={{ display: 'none' }}
             />
 
@@ -464,30 +503,57 @@ export function MultipleFileUpload({
                             }}
                         >
                             <Group justify="space-between">
-                                <Group gap="sm">
+                                <Group gap="sm" style={{ flex: 1, minWidth: 0 }}>
                                     <IconPhoto size={16} />
-                                    <Text size="sm" truncate style={{ flex: 1 }}>
+                                    <Text
+                                        size="sm"
+                                        style={{
+                                            flex: 1,
+                                            minWidth: 0,
+                                            wordBreak: 'break-all',
+                                            lineHeight: 1.2
+                                        }}
+                                        title={file instanceof File ? file.name : file}
+                                    >
                                         {file instanceof File ? file.name : file}
                                     </Text>
                                 </Group>
-                                <ActionIcon color="red" size="sm" onClick={() => removeFile(index)}>
+                                <ActionIcon
+                                    color="red"
+                                    size="sm"
+                                    onClick={() => removeFile(index)}
+                                    title="Remove file"
+                                    variant="subtle"
+                                >
                                     <IconX size={14} />
                                 </ActionIcon>
                             </Group>
 
                             {/* Image preview */}
                             {preview && (file instanceof File ? file.type.startsWith('image/') : true) && getImageUrl(file) && (
-                                <Image
-                                    src={getImageUrl(file) || ''}
-                                    alt="Preview"
+                                <Box
                                     style={{
-                                        maxWidth: '100%',
-                                        maxHeight: '100px',
-                                        objectFit: 'cover',
-                                        borderRadius: 'var(--mantine-radius-xs)',
                                         marginTop: 'var(--mantine-spacing-xs)',
+                                        border: '1px solid var(--mantine-color-gray-2)',
+                                        borderRadius: 'var(--mantine-radius-xs)',
+                                        padding: 'var(--mantine-spacing-xs)',
+                                        backgroundColor: 'var(--mantine-color-white)',
                                     }}
-                                />
+                                >
+                                    <Image
+                                        src={getImageUrl(file) || ''}
+                                        alt="Preview"
+                                        style={{
+                                            maxWidth: '100%',
+                                            maxHeight: '100px',
+                                            objectFit: 'cover',
+                                            borderRadius: 'var(--mantine-radius-xs)',
+                                        }}
+                                        onError={(e) => {
+                                            console.warn('Failed to load image preview:', e);
+                                        }}
+                                    />
+                                </Box>
                             )}
                         </Box>
                     ))}

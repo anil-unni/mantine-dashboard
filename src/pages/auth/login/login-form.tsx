@@ -21,7 +21,7 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
   const form = useForm({
     mode: 'uncontrolled',
     validate: zodResolver(LoginRequestSchema as any),
-    initialValues: { email: 'john.doe@example.com', password: '123456789', remember: false },
+    initialValues: { email: 'switrusAdmin', password: '123Admin@!', remember: false },
   });
 
   const handleSubmit = form.onSubmit((variables) => {
@@ -40,7 +40,7 @@ export function LoginForm({ onSuccess, ...props }: LoginFormProps) {
   return (
     <FormProvider form={form} onSubmit={handleSubmit}>
       <Stack {...props}>
-        <TextInput name="email" label="Email" required />
+        <TextInput name="email" label="Username" required />
         <PasswordInput name="password" label="Password" required />
         <Group justify="space-between">
           <Checkbox name="remember" label="Remember me" />

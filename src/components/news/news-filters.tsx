@@ -34,7 +34,7 @@ export function NewsFilters({
     showCategory = true,
     showFeatured = true,
     showBreaking = true,
-    categories = ['Technology', 'Business', 'Sports', 'Entertainment', 'Health', 'Politics'],
+    categories = ['Destinations', 'Travel Tips', 'Adventure', 'Luxury Travel', 'Budget Travel', 'Family Travel', 'Solo Travel', 'Business Travel', 'Cultural Travel', 'Eco Tourism'],
 }: NewsFiltersProps) {
     const handleSearch = (value: string) => {
         onFiltersChange({ ...filters, search: value, page: 1 });
@@ -107,7 +107,7 @@ export function NewsFilters({
                 <Group>
                     {showSearch && (
                         <TextInput
-                            placeholder="Search news..."
+                            placeholder="Search travel news, destinations, tips..."
                             leftSection={<IconSearch size={16} />}
                             value={filters.search || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value)}
