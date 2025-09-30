@@ -161,7 +161,11 @@ interface CreatePostMutationHookArgs<
   /** The Zod schema for the response data */
   responseSchema: ResponseSchema;
   /** The mutation parameters for the react-query hook */
-  rMutationParams?: EnhancedMutationParams<z.infer<ResponseSchema>, Error, z.infer<BodySchema>>;
+  rMutationParams?: EnhancedMutationParams<
+    z.infer<ResponseSchema>,
+    Error,
+    { variables: z.infer<BodySchema>; query?: Record<string, any> | undefined; route?: Record<string, any> | undefined }
+  >;
   options?: { isMultipart?: boolean };
 }
 
@@ -192,28 +196,29 @@ export function createPostMutationHook<
     const queryClient = useQueryClient();
     const baseUrl = createUrl(endpoint, params?.query, params?.route);
 
-    const mutationFn = async ({
-      variables,
-      route,
-      query,
-    }: {
+    type MutationVariables = {
       variables: z.infer<BodySchema>;
       query?: QueryParams;
       route?: RouteParams;
-    }) => {
+    };
+
+    const mutationFn = async ({ variables, route, query }: MutationVariables): Promise<z.infer<ResponseSchema>> => {
       const url = createUrl(baseUrl, query, route);
 
       const config = options?.isMultipart
         ? { headers: { 'Content-Type': 'multipart/form-data' } }
         : undefined;
 
-      return client
-        .post(url, bodySchema.parse(variables), config)
-        .then((response) => responseSchema.parse(response.data))
-        .catch(handleRequestError);
+      try {
+        const response = await client.post(url, bodySchema.parse(variables), config);
+        return responseSchema.parse(response.data);
+      } catch (error) {
+        handleRequestError(error);
+        throw error as any;
+      }
     };
 
-    return useMutation({
+    return useMutation<z.infer<ResponseSchema>, Error, MutationVariables>({
       ...rMutationParams,
       mutationFn,
       onSuccess: (data, variables, context) =>
@@ -239,7 +244,11 @@ interface CreatePutMutationHookArgs<
   /** The Zod schema for the response data */
   responseSchema: ResponseSchema;
   /** The mutation parameters for the react-query hook */
-  rMutationParams?: EnhancedMutationParams<z.infer<ResponseSchema>, Error, z.infer<BodySchema>>;
+  rMutationParams?: EnhancedMutationParams<
+    z.infer<ResponseSchema>,
+    Error,
+    { variables: z.infer<BodySchema>; query?: Record<string, any> | undefined; route?: Record<string, any> | undefined }
+  >;
   options?: { isMultipart?: boolean };
 }
 
@@ -269,28 +278,29 @@ export function createPutMutationHook<
   return (params?: { query?: QueryParams; route?: RouteParams }) => {
     const queryClient = useQueryClient();
     const baseUrl = createUrl(endpoint, params?.query, params?.route);
-    const mutationFn = async ({
-      variables,
-      route,
-      query,
-    }: {
+    type MutationVariables = {
       variables: z.infer<BodySchema>;
       query?: QueryParams;
       route?: RouteParams;
-    }) => {
+    };
+
+    const mutationFn = async ({ variables, route, query }: MutationVariables): Promise<z.infer<ResponseSchema>> => {
       const url = createUrl(baseUrl, query, route);
 
       const config = options?.isMultipart
         ? { headers: { 'Content-Type': 'multipart/form-data' } }
         : undefined;
 
-      return client
-        .put(url, bodySchema.parse(variables), config)
-        .then((response) => responseSchema.parse(response.data))
-        .catch(handleRequestError);
+      try {
+        const response = await client.put(url, bodySchema.parse(variables), config);
+        return responseSchema.parse(response.data);
+      } catch (error) {
+        handleRequestError(error);
+        throw error as any;
+      }
     };
 
-    return useMutation({
+    return useMutation<z.infer<ResponseSchema>, Error, MutationVariables>({
       ...rMutationParams,
       mutationFn,
       onSuccess: (data, variables, context) =>
@@ -333,28 +343,33 @@ export function createDeleteMutationHook<
 >({
   endpoint,
   rMutationParams,
-}: CreateDeleteMutationHookArgs<z.infer<ModelSchema>, Error, z.infer<ModelSchema>>) {
+}: CreateDeleteMutationHookArgs<
+  z.infer<ModelSchema>,
+  Error,
+  { model: z.infer<ModelSchema>; query?: QueryParams; route?: RouteParams }
+>) {
   return (params?: { query?: QueryParams; route?: RouteParams }) => {
     const queryClient = useQueryClient();
     const baseUrl = createUrl(endpoint, params?.query, params?.route);
 
-    const mutationFn = async ({
-      model,
-      route,
-      query,
-    }: {
+    type MutationVariables = {
       model: z.infer<ModelSchema>;
       query?: QueryParams;
       route?: RouteParams;
-    }) => {
-      const url = createUrl(baseUrl, query, route);
-      return client
-        .delete(url)
-        .then(() => model)
-        .catch(handleRequestError);
     };
 
-    return useMutation({
+    const mutationFn = async ({ model, route, query }: MutationVariables): Promise<z.infer<ModelSchema>> => {
+      const url = createUrl(baseUrl, query, route);
+      try {
+        await client.delete(url);
+        return model;
+      } catch (error) {
+        handleRequestError(error);
+        throw error as any;
+      }
+    };
+
+    return useMutation<z.infer<ModelSchema>, Error, MutationVariables>({
       ...rMutationParams,
       mutationFn,
       onSuccess: (data, variables, context) =>

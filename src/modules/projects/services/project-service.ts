@@ -43,6 +43,27 @@ class ProjectService {
     await projectsService.partialUpdateProject(projectId, { status });
   }
 
+  async updateProjectProgress(projectId: number, progress: number): Promise<void> {
+    await projectsService.partialUpdateProject(projectId, { progress } as any);
+  }
+
+  async assignProjectManager(projectId: number, userId: number): Promise<void> {
+    await projectsService.partialUpdateProject(projectId, { project_manager: userId } as any);
+  }
+
+  async addTeamMember(projectId: number, userId: number): Promise<void> {
+    const project = await this.getProject(projectId);
+    const memberIds = (project.team_members || []).map((u: any) => u.id);
+    if (!memberIds.includes(userId)) memberIds.push(userId);
+    await projectsService.partialUpdateProject(projectId, { team_members: memberIds } as any);
+  }
+
+  async removeTeamMember(projectId: number, userId: number): Promise<void> {
+    const project = await this.getProject(projectId);
+    const memberIds = (project.team_members || []).map((u: any) => u.id).filter((id: number) => id !== userId);
+    await projectsService.partialUpdateProject(projectId, { team_members: memberIds } as any);
+  }
+
   // Project statistics
   async getProjectStats(): Promise<ProjectStats> {
     const response = await api.get('/api/v1/projects/stats/');

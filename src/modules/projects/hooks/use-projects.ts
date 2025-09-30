@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectService } from '../services/project-service';
-import { Project, ProjectStats, ProjectWithDetails } from '../../../types/api';
+import { Project } from '../../../types/api';
+import { ProjectStats, ProjectWithDetails } from '../types';
+import { StatusEnum } from '../../../types/api';
 import { ProjectFormData, ProjectFilters } from '../types';
 
 export function useProjects() {
@@ -84,7 +86,7 @@ export function useProjects() {
   });
 
   const updateProjectStatusMutation = useMutation({
-    mutationFn: ({ projectId, status }: { projectId: number; status: string }) =>
+    mutationFn: ({ projectId, status }: { projectId: number; status: StatusEnum }) =>
       projectService.updateProjectStatus(projectId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });

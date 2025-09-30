@@ -12,7 +12,9 @@ export const LinkChip = forwardRef<HTMLInputElement, LinkChipProps>(
     <Chip
       {...props}
       style={{ ...props.style, display: inline ? 'inline-block' : 'block' }}
-      wrapperProps={href ? { component: NavLink, to: href, ref } : { ref }}
+      component={href ? NavLink : undefined}
+      {...(href ? { to: href } : {})}
+      ref={ref}
       size={size}
       variant={variant}
       checked={checked}
