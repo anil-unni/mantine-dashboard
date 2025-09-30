@@ -1,41 +1,22 @@
-// Generated types from API.yaml schema
+// API Types generated from OpenAPI schema
+
+// Base types
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
 
 // Enums
-export type PriorityEnum = 'low' | 'medium' | 'high' | 'urgent';
-
-export type ProjectStatusEnum = 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled';
-
+export type StatusEnum = 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled';
 export type TaskStatusEnum = 'pending' | 'in_progress' | 'review' | 'completed' | 'cancelled';
-
+export type PriorityEnum = 'low' | 'medium' | 'high' | 'urgent';
+export type CardTypeEnum = 'summary' | 'chart' | 'list' | 'metric' | 'progress';
+export type ModuleEnum = 'users' | 'projects' | 'tasks' | 'reports' | 'audit' | 'workspace';
 export type ThemeEnum = 'light' | 'dark' | 'auto';
 
-// Base interfaces
-export interface BaseEntity {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  created_by?: number;
-  updated_by?: number;
-  is_active: boolean;
-}
-
-// User related types
-export interface UserProfile {
-  phone?: string;
-  avatar?: string;
-  bio?: string;
-  timezone: string;
-  language: string;
-  job_title?: string;
-  department?: string;
-  employee_id?: string;
-  email_notifications: boolean;
-  sms_notifications: boolean;
-  theme: ThemeEnum;
-  created_at: string;
-  updated_at: string;
-}
-
+// User types
 export interface User {
   id: number;
   username: string;
@@ -44,9 +25,55 @@ export interface User {
   last_name: string;
   is_active: boolean;
   date_joined: string;
-  last_login?: string;
+  last_login: string | null;
   profile: UserProfile;
   organizations: string;
+}
+
+export interface UserProfile {
+  phone: string | null;
+  avatar: string | null;
+  bio: string | null;
+  timezone: string;
+  language: string;
+  job_title: string | null;
+  department: string | null;
+  employee_id: string | null;
+  email_notifications: boolean;
+  sms_notifications: boolean;
+  theme: ThemeEnum;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserRequest {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+}
+
+export interface UserUpdateRequest {
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  profile: UserProfileRequest;
+}
+
+export interface UserProfileRequest {
+  phone?: string | null;
+  avatar?: File | null;
+  bio?: string | null;
+  timezone: string;
+  language: string;
+  job_title?: string | null;
+  department?: string | null;
+  employee_id?: string | null;
+  email_notifications: boolean;
+  sms_notifications: boolean;
+  theme: ThemeEnum;
 }
 
 export interface UserRegistrationRequest {
@@ -65,62 +92,7 @@ export interface UserRegistration {
   last_name: string;
 }
 
-export interface UserRequest {
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  is_active: boolean;
-}
-
-export interface PatchedUserRequest {
-  username?: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-  is_active?: boolean;
-}
-
-export interface UserUpdateRequest {
-  email: string;
-  first_name: string;
-  last_name: string;
-  is_active: boolean;
-  profile: UserProfileRequest;
-}
-
-export interface PatchedUserUpdateRequest {
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-  is_active?: boolean;
-  profile?: UserProfileRequest;
-}
-
-export interface UserUpdate {
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  is_active: boolean;
-  profile: UserProfile;
-}
-
-export interface UserProfileRequest {
-  phone?: string;
-  avatar?: string;
-  bio?: string;
-  timezone: string;
-  language: string;
-  job_title?: string;
-  department?: string;
-  employee_id?: string;
-  email_notifications: boolean;
-  sms_notifications: boolean;
-  theme: ThemeEnum;
-}
-
-// Auth related types
+// Auth types
 export interface CustomTokenObtainPairRequest {
   username: string;
   password: string;
@@ -147,107 +119,118 @@ export interface ChangePassword {
   new_password_confirm: string;
 }
 
-// Project related types
-export interface Project extends BaseEntity {
+// Project types
+export interface Project {
+  id: number;
   name: string;
-  description?: string;
-  status: ProjectStatusEnum;
+  description: string | null;
+  status: StatusEnum;
   priority: PriorityEnum;
-  start_date?: string;
-  end_date?: string;
+  start_date: string | null;
+  end_date: string | null;
   project_manager: User;
   team_members: User[];
-  budget?: string;
+  budget: string | null;
   progress: number;
   tags: Record<string, any>;
   settings: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
+export interface ProjectRequest {
+  name: string;
+  description?: string | null;
+  status?: StatusEnum;
+  priority?: PriorityEnum;
+  start_date?: string | null;
+  end_date?: string | null;
+  budget?: string | null;
+  tags?: Record<string, any>;
+  settings?: Record<string, any>;
+  is_active?: boolean;
 }
 
 export interface ProjectCreateRequest {
   name: string;
-  description?: string;
-  status?: ProjectStatusEnum;
+  description?: string | null;
+  status?: StatusEnum;
   priority?: PriorityEnum;
-  start_date?: string;
-  end_date?: string;
-  project_manager?: number;
+  start_date?: string | null;
+  end_date?: string | null;
+  project_manager?: number | null;
   team_members?: number[];
-  budget?: string;
+  budget?: string | null;
   tags?: Record<string, any>;
   settings?: Record<string, any>;
 }
 
 export interface ProjectCreate {
   name: string;
-  description?: string;
-  status?: ProjectStatusEnum;
-  priority?: PriorityEnum;
-  start_date?: string;
-  end_date?: string;
-  project_manager?: number;
-  team_members?: number[];
-  budget?: string;
-  tags?: Record<string, any>;
-  settings?: Record<string, any>;
+  description: string | null;
+  status: StatusEnum;
+  priority: PriorityEnum;
+  start_date: string | null;
+  end_date: string | null;
+  project_manager: number | null;
+  team_members: number[];
+  budget: string | null;
+  tags: Record<string, any>;
+  settings: Record<string, any>;
 }
 
-export interface ProjectRequest {
-  name: string;
-  description?: string;
-  status?: ProjectStatusEnum;
-  priority?: PriorityEnum;
-  start_date?: string;
-  end_date?: string;
-  budget?: string;
-  tags?: Record<string, any>;
-  settings?: Record<string, any>;
-  is_active?: boolean;
-}
-
-export interface PatchedProjectRequest {
-  name?: string;
-  description?: string;
-  status?: ProjectStatusEnum;
-  priority?: PriorityEnum;
-  start_date?: string;
-  end_date?: string;
-  budget?: string;
-  tags?: Record<string, any>;
-  settings?: Record<string, any>;
-  is_active?: boolean;
-}
-
-// Task related types
-export interface Task extends BaseEntity {
+// Task types
+export interface Task {
+  id: number;
   project: number;
   title: string;
-  description?: string;
+  description: string | null;
   status: TaskStatusEnum;
   priority: PriorityEnum;
   assigned_to: User;
   created_by: User;
   updated_by: User;
-  start_date?: string;
-  due_date?: string;
-  estimated_hours?: string;
+  start_date: string | null;
+  due_date: string | null;
+  estimated_hours: string | null;
   actual_hours: string;
   progress: number;
   tags: Record<string, any>;
   attachments: Record<string, any>;
   comments: Record<string, any>;
   depends_on: number[];
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
+export interface TaskRequest {
+  project: number;
+  title: string;
+  description?: string | null;
+  status?: TaskStatusEnum;
+  priority?: PriorityEnum;
+  start_date?: string | null;
+  due_date?: string | null;
+  estimated_hours?: string | null;
+  tags?: Record<string, any>;
+  attachments?: Record<string, any>;
+  comments?: Record<string, any>;
+  depends_on?: number[];
+  is_active?: boolean;
 }
 
 export interface TaskCreateRequest {
   project: number;
   title: string;
-  description?: string;
+  description?: string | null;
   status?: TaskStatusEnum;
   priority?: PriorityEnum;
-  assigned_to?: number;
-  start_date?: string;
-  due_date?: string;
-  estimated_hours?: string;
+  assigned_to?: number | null;
+  start_date?: string | null;
+  due_date?: string | null;
+  estimated_hours?: string | null;
   tags?: Record<string, any>;
   attachments?: Record<string, any>;
   comments?: Record<string, any>;
@@ -257,216 +240,166 @@ export interface TaskCreateRequest {
 export interface TaskCreate {
   project: number;
   title: string;
-  description?: string;
-  status?: TaskStatusEnum;
-  priority?: PriorityEnum;
-  assigned_to?: number;
-  start_date?: string;
-  due_date?: string;
-  estimated_hours?: string;
-  tags?: Record<string, any>;
-  attachments?: Record<string, any>;
-  comments?: Record<string, any>;
-  depends_on?: number[];
+  description: string | null;
+  status: TaskStatusEnum;
+  priority: PriorityEnum;
+  assigned_to: number | null;
+  start_date: string | null;
+  due_date: string | null;
+  estimated_hours: string | null;
+  tags: Record<string, any>;
+  attachments: Record<string, any>;
+  comments: Record<string, any>;
+  depends_on: number[];
 }
 
-export interface TaskRequest {
-  project: number;
-  title: string;
-  description?: string;
-  status?: TaskStatusEnum;
-  priority?: PriorityEnum;
-  start_date?: string;
-  due_date?: string;
-  estimated_hours?: string;
-  tags?: Record<string, any>;
-  attachments?: Record<string, any>;
-  comments?: Record<string, any>;
-  depends_on?: number[];
-  is_active?: boolean;
-}
-
-export interface PatchedTaskRequest {
-  project?: number;
-  title?: string;
-  description?: string;
-  status?: TaskStatusEnum;
-  priority?: PriorityEnum;
-  start_date?: string;
-  due_date?: string;
-  estimated_hours?: string;
-  tags?: Record<string, any>;
-  attachments?: Record<string, any>;
-  comments?: Record<string, any>;
-  depends_on?: number[];
-  is_active?: boolean;
-}
-
-// TimeLog related types
-export interface TimeLog extends BaseEntity {
+// TimeLog types
+export interface TimeLog {
+  id: number;
   user: User;
   task: number;
   start_time: string;
-  end_time?: string;
-  duration?: string;
-  description?: string;
+  end_time: string | null;
+  duration: string | null;
+  description: string | null;
   is_billable: boolean;
   is_approved: boolean;
-  approved_by?: number;
-}
-
-export interface TimeLogCreateRequest {
-  task: number;
-  start_time: string;
-  end_time?: string;
-  description?: string;
-  is_billable: boolean;
-}
-
-export interface TimeLogCreate {
-  task: number;
-  start_time: string;
-  end_time?: string;
-  description?: string;
-  is_billable: boolean;
+  approved_by: number | null;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
 }
 
 export interface TimeLogRequest {
   task: number;
   start_time: string;
-  end_time?: string;
-  description?: string;
-  is_billable: boolean;
-  is_approved: boolean;
-  approved_by?: number;
-  is_active: boolean;
-}
-
-export interface PatchedTimeLogRequest {
-  task?: number;
-  start_time?: string;
-  end_time?: string;
-  description?: string;
+  end_time?: string | null;
+  description?: string | null;
   is_billable?: boolean;
   is_approved?: boolean;
-  approved_by?: number;
+  approved_by?: number | null;
   is_active?: boolean;
 }
 
-// Pagination types
-export interface PaginatedResponse<T> {
-  count: number;
-  next?: string;
-  previous?: string;
-  results: T[];
+export interface TimeLogCreateRequest {
+  task: number;
+  start_time: string;
+  end_time?: string | null;
+  description?: string | null;
+  is_billable?: boolean;
 }
 
-export type PaginatedProjectList = PaginatedResponse<Project>;
-export type PaginatedTaskList = PaginatedResponse<Task>;
-export type PaginatedTimeLogList = PaginatedResponse<TimeLog>;
-export type PaginatedUserList = PaginatedResponse<User>;
-
-// API Response types
-export interface ApiResponse<T = any> {
-  data: T;
-  message?: string;
-  status: number;
+export interface TimeLogCreate {
+  task: number;
+  start_time: string;
+  end_time: string | null;
+  description: string | null;
+  is_billable: boolean;
 }
 
-export interface ApiError {
-  message: string;
-  status: number;
-  details?: Record<string, any>;
-}
-
-// Query parameters
-export interface PaginationParams {
-  page?: number;
-  ordering?: string;
-  search?: string;
-}
-
-export interface ProjectListParams extends PaginationParams {}
-
-export interface TaskListParams extends PaginationParams {
-  project_id: number;
-}
-
-export interface TimeLogListParams extends PaginationParams {
-  project_id: number;
-  task_id: number;
-}
-
-export interface UserListParams extends PaginationParams {
-  org_id: number;
-}
-
-// Dashboard and workspace types
-export interface DashboardData {
-  total_projects: number;
-  active_projects: number;
-  total_tasks: number;
-  completed_tasks: number;
-  total_hours_logged: number;
-  recent_activities: Activity[];
-}
-
-export interface Activity {
-  id: number;
-  type: 'project_created' | 'task_created' | 'task_updated' | 'time_logged' | 'user_joined';
-  description: string;
-  user: User;
-  timestamp: string;
-  metadata?: Record<string, any>;
-}
-
-// Report types
-export interface ReportData {
-  id: string;
-  name: string;
-  type: 'employee_productivity' | 'project_progress' | 'time_tracking' | 'custom';
-  data: Record<string, any>;
-  generated_at: string;
-  generated_by: User;
-}
-
-// Audit types
-export interface AuditLog {
-  id: number;
-  action: 'create' | 'update' | 'delete';
-  entity_type: 'project' | 'task' | 'user' | 'timelog';
-  entity_id: number;
-  user: User;
-  timestamp: string;
-  changes?: Record<string, any>;
-  ip_address?: string;
-  user_agent?: string;
-}
-
-// Role and Permission types (for RBAC)
-export interface Role {
+// Dashboard Card types
+export interface DashboardCard {
   id: number;
   name: string;
-  description?: string;
-  permissions: Permission[];
+  title: string;
+  description: string | null;
+  module: ModuleEnum;
+  card_type: CardTypeEnum;
+  icon: string | null;
+  color: string;
+  order: number;
+  required_permissions: Record<string, any>;
+  visible_to_roles: Record<string, any>;
+  data_source: string;
+  refresh_interval: number;
+  is_active: boolean;
+  show_in_dashboard: boolean;
+  show_in_sidebar: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DashboardCardRequest {
+  name: string;
+  title: string;
+  description?: string | null;
+  module: ModuleEnum;
+  card_type: CardTypeEnum;
+  icon?: string | null;
+  color: string;
+  order?: number;
+  required_permissions?: Record<string, any>;
+  visible_to_roles?: Record<string, any>;
+  data_source: string;
+  refresh_interval?: number;
+  is_active?: boolean;
+  show_in_dashboard?: boolean;
+  show_in_sidebar?: boolean;
+}
+
+// Paginated response types
+export interface PaginatedUserList extends PaginatedResponse<User> {}
+export interface PaginatedProjectList extends PaginatedResponse<Project> {}
+export interface PaginatedTaskList extends PaginatedResponse<Task> {}
+export interface PaginatedTimeLogList extends PaginatedResponse<TimeLog> {}
+export interface PaginatedDashboardCardList extends PaginatedResponse<DashboardCard> {}
+
+// RBAC types (align with API.yaml)
+export interface Permission {
+  id: number;
+  codename: string;
+  name: string;
+  description: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface Permission {
+export interface Role {
   id: number;
   name: string;
-  resource: string;
-  action: 'create' | 'read' | 'update' | 'delete' | 'assign';
-  description?: string;
+  description: string | null;
+  is_active: boolean;
+  permissions: number[] | Permission[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserRole {
   id: number;
-  user: User;
-  role: Role;
-  assigned_at: string;
-  assigned_by: User;
-  is_active: boolean;
+  user: number | User;
+  role: number | Role;
+}
+
+export interface UserRoleFormData {
+  user: number;
+  role: number;
+}
+
+// API Response types
+export interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+  statusText: string;
+}
+
+export interface ApiError {
+  message: string;
+  status: number;
+  details?: any;
+}
+
+// Common query parameters
+export interface PaginationParams {
+  page?: number;
+  page_size?: number;
+}
+
+export interface SearchParams {
+  search?: string;
+  ordering?: string;
+}
+
+export interface FilterParams extends PaginationParams, SearchParams {
+  [key: string]: any;
 }

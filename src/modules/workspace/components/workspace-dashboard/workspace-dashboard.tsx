@@ -24,9 +24,9 @@ import {
     IconChecklist,
     IconTrendingUp,
     IconCalendar,
-    IconPlay,
-    IconPause,
-    IconStop,
+    IconPlayerPlay,
+    IconPlayerPause,
+    IconPlayerStop,
     IconPlus,
     IconRefresh,
     IconAlertTriangle,
@@ -160,7 +160,7 @@ export function WorkspaceDashboard({ onNavigate }: WorkspaceDashboardProps) {
                         size="sm"
                         onClick={() => handleTimerAction(task.id, 'start')}
                     >
-                        <IconPlay size={14} />
+                        <IconPlayerPlay size={14} />
                     </ActionIcon>
                     <ActionIcon
                         variant="light"
@@ -168,7 +168,7 @@ export function WorkspaceDashboard({ onNavigate }: WorkspaceDashboardProps) {
                         size="sm"
                         onClick={() => handleTimerAction(task.id, 'pause')}
                     >
-                        <IconPause size={14} />
+                        <IconPlayerPause size={14} />
                     </ActionIcon>
                     <ActionIcon
                         variant="light"
@@ -176,7 +176,7 @@ export function WorkspaceDashboard({ onNavigate }: WorkspaceDashboardProps) {
                         size="sm"
                         onClick={() => handleTimerAction(task.id, 'stop')}
                     >
-                        <IconStop size={14} />
+                        <IconPlayerStop size={14} />
                     </ActionIcon>
                 </Group>
                 <Button
@@ -303,7 +303,7 @@ export function WorkspaceDashboard({ onNavigate }: WorkspaceDashboardProps) {
                                 <Button
                                     variant="light"
                                     fullWidth
-                                    leftSection={<IconPlay size={16} />}
+                                    leftSection={<IconPlayerPlay size={16} />}
                                     onClick={() => onNavigate?.('/workspace/timer')}
                                 >
                                     Start Timer

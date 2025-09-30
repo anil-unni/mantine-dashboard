@@ -15,7 +15,10 @@ import {
     Divider,
     RingProgress,
     Center,
+    Modal,
+    Anchor,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
     IconFolder,
     IconUsers,
@@ -30,6 +33,8 @@ import {
 } from '@tabler/icons-react';
 import { useProjects } from '../../hooks/use-projects';
 import { ProjectStats } from '../../types';
+import { paths } from '@/routes/paths';
+import { ProjectForm } from '../project-form/project-form';
 import { formatNumber, formatCurrency, formatDate } from '../../../shared/utils';
 
 interface ProjectDashboardProps {
@@ -37,7 +42,8 @@ interface ProjectDashboardProps {
 }
 
 export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
-    const { stats, loading, refetchProjects, refetchStats } = useProjects();
+    const { stats, loading, refetchProjects, refetchStats, createProject } = useProjects();
+    const [opened, { open, close }] = useDisclosure(false);
 
     const handleRefresh = () => {
         refetchProjects();
@@ -164,12 +170,29 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                     </Button>
                     <Button
                         leftSection={<IconPlus size={16} />}
-                        onClick={() => onNavigate?.('/projects/create')}
+                        onClick={open}
                     >
                         Create Project
                     </Button>
                 </Group>
             </Group>
+
+            <Modal opened={opened} onClose={close} title="Create Project" size="lg">
+                <Stack>
+                    <ProjectForm
+                        onSubmit={async (data) => {
+                            await createProject(data);
+                            close();
+                            refetchProjects();
+                            refetchStats();
+                        }}
+                    />
+                    <Text size="sm" c="dimmed">
+                        Prefer a full page?{' '}
+                        <Anchor onClick={() => { close(); onNavigate?.(paths.app.projects.create); }}>Open full form</Anchor>
+                    </Text>
+                </Stack>
+            </Modal>
 
             {/* Statistics Cards */}
             <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
@@ -179,7 +202,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                     icon={<IconFolder size={20} />}
                     color="blue"
                     description="All projects in system"
-                    onClick={() => onNavigate?.('/projects')}
+                    onClick={() => onNavigate?.(paths.app.projects.root)}
                     trend={{ value: 12, type: 'increase' }}
                 />
                 <StatCard
@@ -188,7 +211,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                     icon={<IconTrendingUp size={20} />}
                     color="green"
                     description="Currently in progress"
-                    onClick={() => onNavigate?.('/projects?status=active')}
+                    onClick={() => onNavigate?.(paths.app.projects.root)}
                 />
                 <StatCard
                     title="Completed Projects"
@@ -196,7 +219,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                     icon={<IconChartBar size={20} />}
                     color="blue"
                     description="Successfully finished"
-                    onClick={() => onNavigate?.('/projects?status=completed')}
+                    onClick={() => onNavigate?.(paths.app.projects.root)}
                 />
                 <StatCard
                     title="On Hold"
@@ -204,7 +227,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                     icon={<IconClock size={20} />}
                     color="orange"
                     description="Temporarily paused"
-                    onClick={() => onNavigate?.('/projects?status=on_hold')}
+                    onClick={() => onNavigate?.(paths.app.projects.root)}
                 />
             </SimpleGrid>
 
@@ -278,7 +301,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                         variant="light"
                         fullWidth
                         leftSection={<IconFolder size={16} />}
-                        onClick={() => onNavigate?.('/projects')}
+                        onClick={() => onNavigate?.(paths.app.projects.root)}
                     >
                         View All Projects
                     </Button>
@@ -286,7 +309,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                         variant="light"
                         fullWidth
                         leftSection={<IconPlus size={16} />}
-                        onClick={() => onNavigate?.('/projects/create')}
+                        onClick={() => onNavigate?.(paths.app.projects.create)}
                     >
                         Create Project
                     </Button>
@@ -294,7 +317,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                         variant="light"
                         fullWidth
                         leftSection={<IconCalendar size={16} />}
-                        onClick={() => onNavigate?.('/projects/timeline')}
+                        onClick={() => onNavigate?.(paths.app.projects.timeline)}
                     >
                         Project Timeline
                     </Button>
@@ -302,7 +325,7 @@ export function ProjectDashboard({ onNavigate }: ProjectDashboardProps) {
                         variant="light"
                         fullWidth
                         leftSection={<IconChartBar size={16} />}
-                        onClick={() => onNavigate?.('/projects/reports')}
+                        onClick={() => onNavigate?.(paths.app.projects.reports)}
                     >
                         Project Reports
                     </Button>

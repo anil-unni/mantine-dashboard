@@ -5,94 +5,97 @@ import { RoleFormData, PermissionFormData, UserRoleFormData, RBACStats } from '.
 class RBACService {
   // Role management
   async getRoles(): Promise<Role[]> {
-    const response = await api.get('/api/v1/rbac/roles/');
-    return response.data.results;
+    const response = await api.get('/api/v1/auth/roles/');
+    return response.data.results ?? response.data;
   }
 
   async getRole(id: number): Promise<Role> {
-    const response = await api.get(`/api/v1/rbac/roles/${id}/`);
+    const response = await api.get(`/api/v1/auth/roles/${id}/`);
     return response.data;
   }
 
   async createRole(data: RoleFormData): Promise<Role> {
-    const response = await api.post('/api/v1/rbac/roles/', data);
+    const response = await api.post('/api/v1/auth/roles/', data);
     return response.data;
   }
 
   async updateRole(id: number, data: RoleFormData): Promise<Role> {
-    const response = await api.put(`/api/v1/rbac/roles/${id}/`, data);
+    const response = await api.put(`/api/v1/auth/roles/${id}/`, data);
     return response.data;
   }
 
   async deleteRole(id: number): Promise<void> {
-    await api.delete(`/api/v1/rbac/roles/${id}/`);
+    await api.delete(`/api/v1/auth/roles/${id}/`);
   }
 
   // Permission management
   async getPermissions(): Promise<Permission[]> {
-    const response = await api.get('/api/v1/rbac/permissions/');
-    return response.data.results;
+    const response = await api.get('/api/v1/auth/permissions/');
+    return response.data.results ?? response.data;
   }
 
   async getPermission(id: number): Promise<Permission> {
-    const response = await api.get(`/api/v1/rbac/permissions/${id}/`);
+    const response = await api.get(`/api/v1/auth/permissions/${id}/`);
     return response.data;
   }
 
   async createPermission(data: PermissionFormData): Promise<Permission> {
-    const response = await api.post('/api/v1/rbac/permissions/', data);
+    const response = await api.post('/api/v1/auth/permissions/', data);
     return response.data;
   }
 
   async updatePermission(id: number, data: PermissionFormData): Promise<Permission> {
-    const response = await api.put(`/api/v1/rbac/permissions/${id}/`, data);
+    const response = await api.put(`/api/v1/auth/permissions/${id}/`, data);
     return response.data;
   }
 
   async deletePermission(id: number): Promise<void> {
-    await api.delete(`/api/v1/rbac/permissions/${id}/`);
+    await api.delete(`/api/v1/auth/permissions/${id}/`);
   }
 
   // User role assignments
-  async getUserRoles(userId: number): Promise<UserRole[]> {
-    const response = await api.get(`/api/v1/rbac/users/${userId}/roles/`);
-    return response.data.results;
+  async getUserRoles(userId?: number): Promise<UserRole[]> {
+    // API.yaml exposes /api/v1/auth/user-roles/ with optional filters
+    const response = await api.get('/api/v1/auth/user-roles/', { params: userId ? { user: userId } : undefined });
+    return response.data.results ?? response.data;
   }
 
   async assignUserRole(data: UserRoleFormData): Promise<UserRole> {
-    const response = await api.post('/api/v1/rbac/user-roles/', data);
+    const response = await api.post('/api/v1/auth/user-roles/', data);
     return response.data;
   }
 
   async updateUserRole(assignmentId: number, data: Partial<UserRoleFormData>): Promise<UserRole> {
-    const response = await api.patch(`/api/v1/rbac/user-roles/${assignmentId}/`, data);
+    const response = await api.patch(`/api/v1/auth/user-roles/${assignmentId}/`, data);
     return response.data;
   }
 
   async removeUserRole(assignmentId: number): Promise<void> {
-    await api.delete(`/api/v1/rbac/user-roles/${assignmentId}/`);
+    await api.delete(`/api/v1/auth/user-roles/${assignmentId}/`);
   }
 
   // Role permissions
   async getRolePermissions(roleId: number): Promise<Permission[]> {
-    const response = await api.get(`/api/v1/rbac/roles/${roleId}/permissions/`);
-    return response.data.results;
+    const response = await api.get(`/api/v1/auth/roles/${roleId}/permissions/`);
+    return response.data.results ?? response.data;
   }
 
   async assignRolePermissions(roleId: number, permissionIds: number[]): Promise<void> {
-    await api.post(`/api/v1/rbac/roles/${roleId}/permissions/`, {
+    await api.post(`/api/v1/auth/roles/${roleId}/permissions/`, {
       permission_ids: permissionIds
     });
   }
 
   // Users management
   async getUsers(params?: { search?: string; role?: number; is_active?: boolean }): Promise<PaginatedResponse<User>> {
-    const response = await api.get('/api/v1/rbac/users/', { params });
+    // No direct users listing in API.yaml RBAC section; adjust to a generic users listing if available.
+    // For now, mirror typical pattern at /api/v1/auth/users/ if backend provides it.
+    const response = await api.get('/api/v1/auth/users/', { params });
     return response.data;
   }
 
   async getUser(id: number): Promise<User> {
-    const response = await api.get(`/api/v1/rbac/users/${id}/`);
+    const response = await api.get(`/api/v1/auth/users/${id}/`);
     return response.data;
   }
 

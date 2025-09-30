@@ -8,4 +8,5 @@ export const app = {
   apiBaseUrl,
   redirectQueryParamName: 'r',
   accessTokenStoreKey: 'access_token',
+  refreshTokenStoreKey: 'refresh_token',
 };  

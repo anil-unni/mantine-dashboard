@@ -1,7 +1,6 @@
-import { client } from '../axios';
-import { User } from '../entities';
+import { authService } from '../services';
+import { User } from '../../types/api';
 
-export async function getAccountInfo() {
-  const response = await client.get('account');
-  return User.parse(response.data);
+export async function getAccountInfo(): Promise<User> {
+  return authService.getProfile();
 }

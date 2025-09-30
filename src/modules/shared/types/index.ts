@@ -23,6 +23,8 @@ export interface TableColumn<T = any> {
   width?: string | number;
   sortable?: boolean;
   filterable?: boolean;
+  type?: 'text' | 'select' | 'multiselect' | 'date' | 'number' | 'switch';
+  options?: FilterOption[];
   render?: (value: any, record: T) => React.ReactNode;
 }
 

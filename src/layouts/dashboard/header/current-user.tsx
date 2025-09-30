@@ -9,24 +9,30 @@ import {
   PiUserSwitchDuotone,
 } from 'react-icons/pi';
 import { Avatar, AvatarProps, ElementProps, Menu } from '@mantine/core';
-import { useAuth, useGetAccountInfo, useLogout } from '@/hooks';
+import { useAuth } from '@/hooks';
+import { useApiLogout } from '@/hooks/api/auth';
+import { useGetAccountInfo } from '@/hooks/api/account';
 
 type CurrentUserProps = Omit<AvatarProps, 'src' | 'alt'> & ElementProps<'div', keyof AvatarProps>;
 
 export function CurrentUser(props: CurrentUserProps) {
-  const { mutate: logout } = useLogout();
+  const { logout, isLoading } = useApiLogout();
   const { setIsAuthenticated } = useAuth();
-  const { data: user } = useGetAccountInfo();
+  const { ui: user } = useGetAccountInfo();
 
-  const handleLogout = () => {
-    logout({ variables: null }, { onSuccess: () => setIsAuthenticated(false) });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      setIsAuthenticated(false);
+    }
   };
 
   return (
     <Menu>
       <Menu.Target>
         <Avatar
-          src={user?.avatarUrl}
+          src={user?.avatarUrl ?? undefined}
           alt={user?.displayName ?? 'Current user'}
           {...props}
           style={{ cursor: 'pointer', ...props.style }}

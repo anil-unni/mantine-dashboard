@@ -1,67 +1,46 @@
 import { api } from '../../../api/axios';
-import { Project, User, Task, PaginatedResponse } from '../../../types/api';
+import { projectsService } from '../../../api/services';
+import { Project, ProjectCreate, PaginatedResponse, StatusEnum } from '../../../types/api';
 import { ProjectFormData, ProjectFilters, ProjectStats, ProjectWithDetails } from '../types';
 
 class ProjectService {
   // Project CRUD operations
   async getProjects(filters?: ProjectFilters): Promise<PaginatedResponse<Project>> {
-    const response = await api.get('/api/v1/projects/', { params: filters });
-    return response.data;
+    return projectsService.getProjects(filters);
   }
 
   async getProject(id: number): Promise<Project> {
-    const response = await api.get(`/api/v1/projects/${id}/`);
-    return response.data;
+    return projectsService.getProject(id);
   }
 
-  async createProject(data: ProjectFormData): Promise<Project> {
-    const response = await api.post('/api/v1/projects/', data);
-    return response.data;
+  async createProject(data: ProjectFormData): Promise<ProjectCreate> {
+    return projectsService.createProject(data);
   }
 
   async updateProject(id: number, data: Partial<ProjectFormData>): Promise<Project> {
-    const response = await api.patch(`/api/v1/projects/${id}/`, data);
-    return response.data;
+    // Map form data to API request shape (ProjectRequest)
+    const request: any = {
+      name: data.name,
+      description: data.description,
+      status: data.status,
+      priority: data.priority,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      budget: data.budget,
+      tags: data.tags,
+      settings: data.settings,
+      is_active: (data as any).is_active,
+    };
+    return projectsService.partialUpdateProject(id, request);
   }
 
   async deleteProject(id: number): Promise<void> {
-    await api.delete(`/api/v1/projects/${id}/`);
+    return projectsService.deleteProject(id);
   }
 
-  // Project management operations
-  async assignProjectManager(projectId: number, userId: number): Promise<void> {
-    await api.patch(`/api/v1/projects/${projectId}/`, {
-      project_manager: userId
-    });
-  }
-
-  async addTeamMember(projectId: number, userId: number): Promise<void> {
-    const project = await this.getProject(projectId);
-    const currentMembers = project.team_members.map(member => member.id);
-    
-    if (!currentMembers.includes(userId)) {
-      await api.patch(`/api/v1/projects/${projectId}/`, {
-        team_members: [...currentMembers, userId]
-      });
-    }
-  }
-
-  async removeTeamMember(projectId: number, userId: number): Promise<void> {
-    const project = await this.getProject(projectId);
-    const currentMembers = project.team_members.map(member => member.id);
-    const updatedMembers = currentMembers.filter(id => id !== userId);
-    
-    await api.patch(`/api/v1/projects/${projectId}/`, {
-      team_members: updatedMembers
-    });
-  }
-
-  async updateProjectStatus(projectId: number, status: string): Promise<void> {
-    await api.patch(`/api/v1/projects/${projectId}/`, { status });
-  }
-
-  async updateProjectProgress(projectId: number, progress: number): Promise<void> {
-    await api.patch(`/api/v1/projects/${projectId}/`, { progress });
+  // Project management operations supported by API
+  async updateProjectStatus(projectId: number, status: StatusEnum): Promise<void> {
+    await projectsService.partialUpdateProject(projectId, { status });
   }
 
   // Project statistics
@@ -74,11 +53,11 @@ class ProjectService {
   async getProjectWithDetails(id: number): Promise<ProjectWithDetails> {
     const [project, tasksResponse] = await Promise.all([
       this.getProject(id),
-      api.get(`/api/v1/projects/${id}/tasks/`)
+      projectsService.getProjectTasks(id)
     ]);
 
-    const tasks = tasksResponse.data.results || [];
-    const completedTasks = tasks.filter(task => task.status === 'completed').length;
+    const tasks: any[] = tasksResponse.results || [];
+    const completedTasks = tasks.filter((task: any) => task.status === 'completed').length;
     const totalTasks = tasks.length;
     const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 

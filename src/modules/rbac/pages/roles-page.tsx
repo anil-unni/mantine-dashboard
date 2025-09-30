@@ -9,9 +9,9 @@ export function RolesPage() {
     const [editingRole, setEditingRole] = useState<Role | null>(null);
 
     const breadcrumbItems = [
-        { title: 'Home', href: '/' },
-        { title: 'RBAC', href: '/rbac' },
-        { title: 'Roles', href: '/rbac/roles' },
+        { title: 'Home', href: '/app/dashboard' },
+        { title: 'RBAC', href: '/app/rbac' },
+        { title: 'Roles', href: '/app/rbac/roles' },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}

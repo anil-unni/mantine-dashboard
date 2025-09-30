@@ -1,17 +1,15 @@
-import { api } from '../../../api/axios';
+import { workspaceService as apiWorkspaceService } from '../../../api/services';
 import { WorkspaceDashboard, TimeLog, TimeLogFormData, TimeLogFilters, CalendarEvent, WorkspaceSettings, TimeTrackingStats } from '../types';
 
 class WorkspaceService {
   // Dashboard
   async getDashboard(): Promise<WorkspaceDashboard> {
-    const response = await api.get('/api/v1/workspace/dashboard/');
-    return response.data;
+    return apiWorkspaceService.getDashboard();
   }
 
   // Tasks
   async getAssignedTasks(): Promise<any[]> {
-    const response = await api.get('/api/v1/workspace/my-tasks/');
-    return response.data.results || [];
+    return apiWorkspaceService.getMyTasks();
   }
 
   async updateTaskStatus(taskId: number, status: string): Promise<void> {
@@ -28,8 +26,7 @@ class WorkspaceService {
 
   // Time logs
   async getTimelogs(filters?: TimeLogFilters): Promise<TimeLog[]> {
-    const response = await api.get('/api/v1/workspace/timelogs/', { params: filters });
-    return response.data.results || [];
+    return apiWorkspaceService.getTimeLogs();
   }
 
   async createTimelog(data: TimeLogFormData): Promise<TimeLog> {
@@ -74,10 +71,7 @@ class WorkspaceService {
 
   // Calendar
   async getCalendarEvents(startDate: string, endDate: string): Promise<CalendarEvent[]> {
-    const response = await api.get('/api/v1/workspace/calendar/', {
-      params: { start_date: startDate, end_date: endDate }
-    });
-    return response.data.results || [];
+    return apiWorkspaceService.getCalendar();
   }
 
   async createCalendarEvent(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {

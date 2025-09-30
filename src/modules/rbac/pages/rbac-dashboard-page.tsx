@@ -4,8 +4,8 @@ import { RBACDashboard } from '../components/rbac-dashboard/rbac-dashboard';
 
 export function RBACDashboardPage() {
     const breadcrumbItems = [
-        { title: 'Home', href: '/' },
-        { title: 'RBAC', href: '/rbac' },
+        { title: 'Home', href: '/app/dashboard' },
+        { title: 'RBAC', href: '/app/rbac' },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
             {item.title}

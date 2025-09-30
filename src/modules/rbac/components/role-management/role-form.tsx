@@ -26,14 +26,17 @@ interface RoleFormProps {
 }
 
 export function RoleForm({ opened, onClose, role, onSuccess }: RoleFormProps) {
-    const { permissions, createRole, updateRole, loading } = useRBAC();
+    const { permissions, createRole, updateRole, isCreatingRole, isUpdatingRole } = useRBAC();
     const isEditing = !!role;
 
     const form = useForm<RoleFormData>({
         initialValues: {
             name: role?.name || '',
             description: role?.description || '',
-            permissions: role?.permissions?.map(p => p.id) || [],
+            permissions:
+                (Array.isArray(role?.permissions)
+                    ? (role!.permissions as any[]).map((p: any) => (typeof p === 'number' ? p : p?.id)).filter(Boolean)
+                    : []) || [],
             is_active: role?.is_active ?? true,
         },
         validate: {
@@ -44,7 +47,7 @@ export function RoleForm({ opened, onClose, role, onSuccess }: RoleFormProps) {
     const handleSubmit = async (values: RoleFormData) => {
         try {
             if (isEditing) {
-                await updateRole(role!.id, values);
+                await updateRole({ id: role!.id, data: values });
             } else {
                 await createRole(values);
             }
@@ -61,24 +64,9 @@ export function RoleForm({ opened, onClose, role, onSuccess }: RoleFormProps) {
         onClose();
     };
 
-    const permissionOptions = permissions.map(permission => ({
+    const permissionOptions = permissions.map((permission) => ({
         value: permission.id.toString(),
-        label: `${permission.name} (${permission.resource})`,
-        group: permission.resource,
-    }));
-
-    const groupedPermissions = permissionOptions.reduce((acc, option) => {
-        const group = option.group;
-        if (!acc[group]) {
-            acc[group] = [];
-        }
-        acc[group].push(option);
-        return acc;
-    }, {} as Record<string, typeof permissionOptions>);
-
-    const permissionGroups = Object.entries(groupedPermissions).map(([group, options]) => ({
-        group,
-        items: options,
+        label: permission.name,
     }));
 
     return (
@@ -123,7 +111,7 @@ export function RoleForm({ opened, onClose, role, onSuccess }: RoleFormProps) {
 
                         <MultiSelect
                             placeholder="Select permissions"
-                            data={permissionGroups}
+                            data={permissionOptions}
                             value={form.values.permissions.map(String)}
                             onChange={(values) =>
                                 form.setFieldValue('permissions', values.map(Number))
@@ -151,13 +139,13 @@ export function RoleForm({ opened, onClose, role, onSuccess }: RoleFormProps) {
                         <Button
                             variant="outline"
                             onClick={handleClose}
-                            disabled={loading.isCreatingRole || loading.isUpdatingRole}
+                            disabled={isCreatingRole || isUpdatingRole}
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
-                            loading={loading.isCreatingRole || loading.isUpdatingRole}
+                            loading={isCreatingRole || isUpdatingRole}
                         >
                             {isEditing ? 'Update Role' : 'Create Role'}
                         </Button>

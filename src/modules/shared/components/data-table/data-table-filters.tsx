@@ -6,7 +6,6 @@ import {
     TextInput,
     Select,
     MultiSelect,
-    DateInput,
     NumberInput,
     Switch,
     Stack,
@@ -14,6 +13,7 @@ import {
     ActionIcon,
     Collapse,
 } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { IconX, IconFilter } from '@tabler/icons-react';
 import { TableColumn, FilterOption } from '../../types';
 
@@ -72,7 +72,14 @@ export function DataTableFilters<T = any>({
                         label={column.title}
                         placeholder={`Filter by ${column.title}`}
                         value={value ? new Date(value) : null}
-                        onChange={(val) => onFilterChange(key, val?.toISOString())}
+                        onChange={(val) => {
+                            if (val) {
+                                const dateValue = typeof val === 'string' ? val : (val as Date).toISOString();
+                                onFilterChange(key, dateValue);
+                            } else {
+                                onFilterChange(key, null);
+                            }
+                        }}
                         clearable
                     />
                 );
@@ -85,7 +92,6 @@ export function DataTableFilters<T = any>({
                         placeholder={`Filter by ${column.title}`}
                         value={value || ''}
                         onChange={(val) => onFilterChange(key, val)}
-                        clearable
                     />
                 );
 
@@ -107,7 +113,6 @@ export function DataTableFilters<T = any>({
                         placeholder={`Filter by ${column.title}`}
                         value={value || ''}
                         onChange={(e) => onFilterChange(key, e.target.value)}
-                        clearable
                     />
                 );
         }

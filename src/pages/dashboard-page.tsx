@@ -167,13 +167,13 @@ function DashboardPage() {
                         <Button
                             variant="outline"
                             leftSection={<IconChartBar size={16} />}
-                            onClick={() => navigate('/reporting')}
+                            onClick={() => navigate('/app/reporting')}
                         >
                             View Reports
                         </Button>
                         <Button
                             leftSection={<IconPlus size={16} />}
-                            onClick={() => navigate('/projects/create')}
+                            onClick={() => navigate('/app/projects/create')}
                         >
                             New Project
                         </Button>
@@ -261,42 +261,42 @@ function DashboardPage() {
                         <Button
                             variant="light"
                             leftSection={<IconFolder size={16} />}
-                            onClick={() => navigate('/projects')}
+                            onClick={() => navigate('/app/projects')}
                         >
                             Projects
                         </Button>
                         <Button
                             variant="light"
                             leftSection={<IconChecklist size={16} />}
-                            onClick={() => navigate('/tasks')}
+                            onClick={() => navigate('/app/tasks')}
                         >
                             Tasks
                         </Button>
                         <Button
                             variant="light"
                             leftSection={<IconUsers size={16} />}
-                            onClick={() => navigate('/workspace')}
+                            onClick={() => navigate('/app/workspace')}
                         >
                             Workspace
                         </Button>
                         <Button
                             variant="light"
                             leftSection={<IconShield size={16} />}
-                            onClick={() => navigate('/rbac')}
+                            onClick={() => navigate('/app/rbac')}
                         >
                             RBAC
                         </Button>
                         <Button
                             variant="light"
                             leftSection={<IconChartBar size={16} />}
-                            onClick={() => navigate('/reporting')}
+                            onClick={() => navigate('/app/reporting')}
                         >
                             Reports
                         </Button>
                         <Button
                             variant="light"
                             leftSection={<IconClock size={16} />}
-                            onClick={() => navigate('/workspace/timelogs')}
+                            onClick={() => navigate('/app/workspace/timelogs')}
                         >
                             Time Logs
                         </Button>
