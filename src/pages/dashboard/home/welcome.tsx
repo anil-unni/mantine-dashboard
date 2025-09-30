@@ -17,6 +17,12 @@ export function Welcome() {
         <Button size="lg" variant="filled">
           Get Started
         </Button>
+        {/* Tailwind CSS Test */}
+        <div className="mt-8 p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg">
+          <p className="text-white font-semibold text-center">
+            🎉 Tailwind CSS is now integrated with Mantine!
+          </p>
+        </div>
       </Stack>
     </Container>
   );

@@ -3,9 +3,11 @@ import { AuthGuard } from '@/guards/auth-guard';
 import { GuestGuard } from '@/guards/guest-guard';
 import { AuthLayout } from '@/layouts/auth';
 import { DashboardLayout } from '@/layouts/dashboard';
+import { MainLayout } from '@/layouts/main-layout/main-layout';
 import docsRoutes from '@/pages/docs/routes';
 import { LazyPage } from './lazy-page';
 import { paths } from './paths';
+import { ModuleRoutes } from './module-routes';
 
 const router = createBrowserRouter([
   ...docsRoutes,
@@ -72,6 +74,26 @@ const router = createBrowserRouter([
       {
         path: paths.dashboard.home,
         element: LazyPage(() => import('@/pages/dashboard/home')),
+      },
+    ],
+  },
+  {
+    path: '/app',
+    element: (
+      <AuthGuard>
+        <MainLayout>
+          <ModuleRoutes />
+        </MainLayout>
+      </AuthGuard>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/app/dashboard" replace />,
+      },
+      {
+        path: 'dashboard',
+        element: LazyPage(() => import('@/pages/dashboard-page')),
       },
     ],
   },
